@@ -1,0 +1,53 @@
+{
+    "name": "einar-hansen/laravel-toolkit",
+    "description": "A collection of helpful utilities and extensions to speed up your Laravel development.",
+    "keywords": [
+        "einar",
+        "einar-hansen",
+        "laravel"
+    ],
+    "homepage": "https://github.com/einar-hansen/laravel-toolkit",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Einar Hansen",
+            "email": "einar@einarhansen.dev",
+            "homepage": "https://einarhansen.dev",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": ">=11.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.18",
+        "orchestra/testbench-core": "^10.0.0",
+        "phpunit/phpunit": "^10.5.35|^11.5.3|^12.0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "EinarHansen\\Toolkit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "EinarHansen\\Toolkit\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan --level=9 analyse",
+        "format": "vendor/bin/pint",
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -1,0 +1,10 @@
+.DS_Store
+.idea
+.phpunit.result.cache
+bin/composer.phar
+build
+certificate
+composer.lock
+coverage
+vendor
+/.phpunit.cache
