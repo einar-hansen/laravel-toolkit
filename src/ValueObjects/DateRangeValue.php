@@ -6,6 +6,7 @@ namespace EinarHansen\Toolkit\ValueObjects;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use Exception;
 use InvalidArgumentException;
 use Stringable;
 
@@ -37,20 +38,18 @@ abstract class DateRangeValue implements Stringable
 
         try {
             return Carbon::parse($value);
-        } catch (\Exception $e) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Invalid date format: %s. Error: %s',
-                    $value,
-                    $e->getMessage()
-                )
-            );
+        } catch (Exception $exception) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid date format: %s. Error: %s',
+                $value,
+                $exception->getMessage()
+            ), $exception->getCode(), $exception);
         }
     }
 
     protected function validate(): void
     {
-        if ($this->getMaxDate() !== null && $this->date->isAfter($this->getMaxDate())) {
+        if ($this->getMaxDate() instanceof CarbonInterface && $this->date->isAfter($this->getMaxDate())) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Date exceeds maximum of %s for %s',
@@ -60,7 +59,7 @@ abstract class DateRangeValue implements Stringable
             );
         }
 
-        if ($this->getMinDate() !== null && $this->date->isBefore($this->getMinDate())) {
+        if ($this->getMinDate() instanceof CarbonInterface && $this->date->isBefore($this->getMinDate())) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Date is before minimum of %s for %s',

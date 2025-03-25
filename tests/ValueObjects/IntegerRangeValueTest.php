@@ -14,11 +14,11 @@ class IntegerRangeValueTest extends TestCase
     public function test_can_create_valid_integer_range_value(): void
     {
         $value = 50;
-        $integerValue = new TestIntegerRangeValue($value);
+        $testIntegerRangeValue = new TestIntegerRangeValue($value);
 
-        $this->assertInstanceOf(IntegerRangeValue::class, $integerValue);
-        $this->assertEquals($value, $integerValue->value());
-        $this->assertEquals((string) $value, (string) $integerValue);
+        $this->assertInstanceOf(IntegerRangeValue::class, $testIntegerRangeValue);
+        $this->assertEquals($value, $testIntegerRangeValue->value());
+        $this->assertEquals((string) $value, (string) $testIntegerRangeValue);
     }
 
     public function test_throws_exception_when_integer_exceeds_max_value(): void
@@ -40,18 +40,18 @@ class IntegerRangeValueTest extends TestCase
     public function test_can_create_integer_with_maximum_value(): void
     {
         $maxValue = 100;
-        $integerValue = new TestIntegerRangeValue($maxValue);
+        $testIntegerRangeValue = new TestIntegerRangeValue($maxValue);
 
-        $this->assertEquals($maxValue, $integerValue->value());
-        $this->assertEquals((string) $maxValue, (string) $integerValue);
+        $this->assertEquals($maxValue, $testIntegerRangeValue->value());
+        $this->assertEquals((string) $maxValue, (string) $testIntegerRangeValue);
     }
 
     public function test_can_create_integer_with_minimum_value(): void
     {
         $minValue = 1;
-        $integerValue = new TestIntegerRangeValue($minValue);
+        $testIntegerRangeValue = new TestIntegerRangeValue($minValue);
 
-        $this->assertEquals($minValue, $integerValue->value());
-        $this->assertEquals((string) $minValue, (string) $integerValue);
+        $this->assertEquals($minValue, $testIntegerRangeValue->value());
+        $this->assertEquals((string) $minValue, (string) $testIntegerRangeValue);
     }
 }

@@ -14,11 +14,11 @@ class StringLengthValueTest extends TestCase
     public function test_can_create_valid_string_length_value(): void
     {
         $value = 'Valid string';
-        $stringValue = new TestStringLengthValue($value);
+        $testStringLengthValue = new TestStringLengthValue($value);
 
-        $this->assertInstanceOf(StringLengthValue::class, $stringValue);
-        $this->assertEquals($value, $stringValue->value());
-        $this->assertEquals($value, (string) $stringValue);
+        $this->assertInstanceOf(StringLengthValue::class, $testStringLengthValue);
+        $this->assertEquals($value, $testStringLengthValue->value());
+        $this->assertEquals($value, (string) $testStringLengthValue);
     }
 
     public function test_throws_exception_when_string_exceeds_max_length(): void
@@ -40,18 +40,18 @@ class StringLengthValueTest extends TestCase
     public function test_can_create_string_with_maximum_length(): void
     {
         $maxLengthString = str_repeat('a', 50);
-        $stringValue = new TestStringLengthValue($maxLengthString);
+        $testStringLengthValue = new TestStringLengthValue($maxLengthString);
 
-        $this->assertEquals(50, mb_strlen($stringValue->value()));
-        $this->assertEquals($maxLengthString, (string) $stringValue);
+        $this->assertEquals(50, mb_strlen($testStringLengthValue->value()));
+        $this->assertEquals($maxLengthString, (string) $testStringLengthValue);
     }
 
     public function test_can_create_string_with_minimum_length(): void
     {
         $minLengthString = str_repeat('a', 5);
-        $stringValue = new TestStringLengthValue($minLengthString);
+        $testStringLengthValue = new TestStringLengthValue($minLengthString);
 
-        $this->assertEquals(5, mb_strlen($stringValue->value()));
-        $this->assertEquals($minLengthString, (string) $stringValue);
+        $this->assertEquals(5, mb_strlen($testStringLengthValue->value()));
+        $this->assertEquals($minLengthString, (string) $testStringLengthValue);
     }
 }

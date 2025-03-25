@@ -1,0 +1,11 @@
+includes:
+	- vendor/tomasvotruba/type-coverage/config/extension.neon
+
+parameters:
+    checkPhpDocMissingReturn: true
+    type_coverage:
+        constant: 0
+        declare: 0
+        param: 0
+        property: 0
+        return: 0

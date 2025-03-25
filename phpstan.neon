@@ -1,0 +1,19 @@
+includes:
+    - extension.neon
+
+parameters:
+    level: 6
+
+    paths:
+        - src
+
+    tmpDir: /tmp/phpstan
+
+    reportStaticMethodSignatures: true
+
+    parallel:
+        jobSize: 20
+        maximumNumberOfProcesses: 32
+        minimumNumberOfJobsPerProcess: 2
+
+    ignoreErrors:

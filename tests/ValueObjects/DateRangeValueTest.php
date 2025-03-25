@@ -15,21 +15,21 @@ class DateRangeValueTest extends TestCase
     public function test_can_create_valid_date_range_value_from_string(): void
     {
         $dateString = '2022-06-15';
-        $dateValue = new TestDateRangeValue($dateString);
+        $testDateRangeValue = new TestDateRangeValue($dateString);
 
-        $this->assertInstanceOf(DateRangeValue::class, $dateValue);
-        $this->assertEquals(Carbon::parse($dateString), $dateValue->value());
-        $this->assertEquals($dateString, (string) $dateValue);
+        $this->assertInstanceOf(DateRangeValue::class, $testDateRangeValue);
+        $this->assertEquals(Carbon::parse($dateString), $testDateRangeValue->value());
+        $this->assertEquals($dateString, (string) $testDateRangeValue);
     }
 
     public function test_can_create_valid_date_range_value_from_carbon_instance(): void
     {
         $carbonDate = Carbon::parse('2022-06-15');
-        $dateValue = new TestDateRangeValue($carbonDate);
+        $testDateRangeValue = new TestDateRangeValue($carbonDate);
 
-        $this->assertInstanceOf(DateRangeValue::class, $dateValue);
-        $this->assertEquals($carbonDate, $dateValue->value());
-        $this->assertEquals('2022-06-15', (string) $dateValue);
+        $this->assertInstanceOf(DateRangeValue::class, $testDateRangeValue);
+        $this->assertEquals($carbonDate, $testDateRangeValue->value());
+        $this->assertEquals('2022-06-15', (string) $testDateRangeValue);
     }
 
     public function test_throws_exception_when_date_exceeds_max_date(): void
@@ -51,19 +51,19 @@ class DateRangeValueTest extends TestCase
     public function test_can_create_date_with_maximum_allowed_date(): void
     {
         $maxDate = '2025-12-31';
-        $dateValue = new TestDateRangeValue($maxDate);
+        $testDateRangeValue = new TestDateRangeValue($maxDate);
 
-        $this->assertEquals(Carbon::parse($maxDate), $dateValue->value());
-        $this->assertEquals($maxDate, (string) $dateValue);
+        $this->assertEquals(Carbon::parse($maxDate), $testDateRangeValue->value());
+        $this->assertEquals($maxDate, (string) $testDateRangeValue);
     }
 
     public function test_can_create_date_with_minimum_allowed_date(): void
     {
         $minDate = '2020-01-01';
-        $dateValue = new TestDateRangeValue($minDate);
+        $testDateRangeValue = new TestDateRangeValue($minDate);
 
-        $this->assertEquals(Carbon::parse($minDate), $dateValue->value());
-        $this->assertEquals($minDate, (string) $dateValue);
+        $this->assertEquals(Carbon::parse($minDate), $testDateRangeValue->value());
+        $this->assertEquals($minDate, (string) $testDateRangeValue);
     }
 
     public function test_can_parse_various_date_formats(): void
@@ -83,10 +83,12 @@ class DateRangeValueTest extends TestCase
 
         foreach ($formats as $format) {
             $expectedCarbon = Carbon::parse($format);
-
             // Skip if the date is outside our test range
-            if ($expectedCarbon->isBefore(Carbon::parse('2020-01-01')) ||
-                $expectedCarbon->isAfter(Carbon::parse('2025-12-31'))) {
+            if ($expectedCarbon->isBefore(Carbon::parse('2020-01-01'))) {
+                continue;
+            }
+
+            if ($expectedCarbon->isAfter(Carbon::parse('2025-12-31'))) {
                 continue;
             }
 
