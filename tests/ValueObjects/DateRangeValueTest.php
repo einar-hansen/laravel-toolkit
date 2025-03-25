@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EinarHansen\Toolkit\Tests\Unit\ValueObjects;
+namespace EinarHansen\Toolkit\Tests\ValueObjects;
 
 use Carbon\Carbon;
 use EinarHansen\Toolkit\Tests\Utilities\ValueObjects\TestDateRangeValue;
