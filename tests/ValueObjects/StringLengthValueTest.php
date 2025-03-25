@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EinarHansen\Toolkit\Tests\Unit\ValueObjects;
+namespace EinarHansen\Toolkit\Tests\ValueObjects;
 
 use EinarHansen\Toolkit\Tests\Utilities\ValueObjects\TestStringLengthValue;
 use EinarHansen\Toolkit\ValueObjects\StringLengthValue;
