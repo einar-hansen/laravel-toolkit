@@ -87,4 +87,57 @@ class StringLengthValueTest extends TestCase
         $instance = TestStringLengthValue::tryFrom(str_repeat('a', 51)); // Above max length
         $this->assertNull($instance);
     }
+
+    public function test_try_from_array_method_returns_instance_with_valid_string_length_value(): void
+    {
+        $array = ['name' => 'Valid string'];
+        $instance = TestStringLengthValue::tryFromArray($array, 'name');
+
+        $this->assertInstanceOf(TestStringLengthValue::class, $instance);
+        $this->assertEquals('Valid string', $instance->value());
+    }
+
+    public function test_try_from_array_method_returns_null_with_invalid_string_length_value(): void
+    {
+        $array = ['name' => 'abcd']; // Below min length
+        $instance = TestStringLengthValue::tryFromArray($array, 'name');
+        $this->assertNull($instance);
+
+        $array = ['name' => str_repeat('a', 51)]; // Above max length
+        $instance = TestStringLengthValue::tryFromArray($array, 'name');
+        $this->assertNull($instance);
+    }
+
+    public function test_try_from_array_method_returns_null_with_missing_key_for_string_length(): void
+    {
+        $array = ['other' => 'Valid string'];
+        $instance = TestStringLengthValue::tryFromArray($array, 'name');
+        $this->assertNull($instance);
+    }
+
+    public function test_from_array_method_creates_instance_with_valid_string_length_value(): void
+    {
+        $array = ['name' => 'Valid string'];
+        $instance = TestStringLengthValue::fromArray($array, 'name');
+
+        $this->assertInstanceOf(TestStringLengthValue::class, $instance);
+        $this->assertEquals('Valid string', $instance->value());
+    }
+
+    public function test_from_array_method_uses_default_with_missing_key_for_string_length(): void
+    {
+        $array = ['other' => 'Valid string'];
+        $instance = TestStringLengthValue::fromArray($array, 'name', 'Default value');
+
+        $this->assertInstanceOf(TestStringLengthValue::class, $instance);
+        $this->assertEquals('Default value', $instance->value());
+    }
+
+    public function test_from_array_method_throws_exception_with_invalid_string_length_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $array = ['name' => 'abcd']; // Below min length
+        TestStringLengthValue::fromArray($array, 'name');
+    }
 }

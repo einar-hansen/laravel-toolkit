@@ -7,6 +7,7 @@ namespace EinarHansen\Toolkit\ValueObjects;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Exception;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Stringable;
 
@@ -92,6 +93,47 @@ abstract class DateRangeValue implements Stringable
     public static function from(string|CarbonInterface $value): static
     {
         return new static($value);
+    }
+
+    /**
+     * Attempts to create a new instance from the given array and key.
+     * Returns null if the value is invalid or not present.
+     *
+     * @param  array<string, mixed>  $array
+     */
+    public static function tryFromArray(array $array, string $key): ?static
+    {
+        $value = Arr::get($array, $key);
+
+        if ($value === null) {
+            return null;
+        }
+
+        return static::tryFrom($value);
+    }
+
+    /**
+     * Creates a new instance from the given array and key.
+     * Uses default if the value is invalid or not present.
+     * Throws an exception if the resulting value is invalid.
+     *
+     * @param  array<string, mixed>  $array
+     *
+     * @throws InvalidArgumentException If the value is invalid
+     */
+    public static function fromArray(array $array, string $key, string|CarbonInterface|null $default = null): static
+    {
+        $value = Arr::get($array, $key, $default);
+
+        if ($value === null) {
+            if ($default === null) {
+                throw new InvalidArgumentException('No default value provided for null array value');
+            }
+
+            return static::from($default);
+        }
+
+        return static::from($value);
     }
 
     public function value(): CarbonInterface

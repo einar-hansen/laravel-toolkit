@@ -158,4 +158,74 @@ class DateRangeValueTest extends TestCase
         $this->assertInstanceOf(TestDateRangeValue::class, $instance);
         $this->assertEquals('2022-06-15', (string) $instance);
     }
+
+    public function test_try_from_array_method_returns_instance_with_valid_date_value(): void
+    {
+        $array = ['date' => '2022-06-15'];
+        $instance = TestDateRangeValue::tryFromArray($array, 'date');
+
+        $this->assertInstanceOf(TestDateRangeValue::class, $instance);
+        $this->assertEquals('2022-06-15', (string) $instance);
+    }
+
+    public function test_try_from_array_method_returns_instance_with_carbon_date_value(): void
+    {
+        $array = ['date' => Carbon::parse('2022-06-15')];
+        $instance = TestDateRangeValue::tryFromArray($array, 'date');
+
+        $this->assertInstanceOf(TestDateRangeValue::class, $instance);
+        $this->assertEquals('2022-06-15', (string) $instance);
+    }
+
+    public function test_try_from_array_method_returns_null_with_invalid_date_value(): void
+    {
+        $array = ['date' => '2019-12-31']; // Before min date
+        $instance = TestDateRangeValue::tryFromArray($array, 'date');
+        $this->assertNull($instance);
+
+        $array = ['date' => '2026-01-01']; // After max date
+        $instance = TestDateRangeValue::tryFromArray($array, 'date');
+        $this->assertNull($instance);
+    }
+
+    public function test_try_from_array_method_returns_null_with_missing_key_for_date(): void
+    {
+        $array = ['other' => '2022-06-15'];
+        $instance = TestDateRangeValue::tryFromArray($array, 'date');
+        $this->assertNull($instance);
+    }
+
+    public function test_from_array_method_creates_instance_with_valid_date_value(): void
+    {
+        $array = ['date' => '2022-06-15'];
+        $instance = TestDateRangeValue::fromArray($array, 'date', '2022-01-01');
+
+        $this->assertInstanceOf(TestDateRangeValue::class, $instance);
+        $this->assertEquals('2022-06-15', (string) $instance);
+    }
+
+    public function test_from_array_method_uses_default_with_missing_key_for_date(): void
+    {
+        $array = ['other' => '2022-06-15'];
+        $instance = TestDateRangeValue::fromArray($array, 'date', '2022-01-01');
+
+        $this->assertInstanceOf(TestDateRangeValue::class, $instance);
+        $this->assertEquals('2022-01-01', (string) $instance);
+    }
+
+    public function test_from_array_method_throws_exception_with_invalid_date_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $array = ['date' => '2019-12-31']; // Before min date
+        TestDateRangeValue::fromArray($array, 'date', '2022-01-01');
+    }
+
+    public function test_from_array_method_throws_exception_with_null_value_and_no_default(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $array = ['other' => '2022-06-15'];
+        TestDateRangeValue::fromArray($array, 'date');
+    }
 }

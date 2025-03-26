@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\ValueObjects;
 
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Stringable;
 
@@ -64,6 +65,46 @@ abstract class IntegerRangeValue implements Stringable
     public static function from(int $value): static
     {
         return new static($value);
+    }
+
+    /**
+     * Attempts to create a new instance from the given array and key.
+     * Returns null if the value is invalid or not present.
+     *
+     * @param  array<string, mixed>  $array
+     */
+    public static function tryFromArray(array $array, string $key): ?static
+    {
+        $value = Arr::get($array, $key);
+        try {
+            if ($value === null) {
+                return null;
+            }
+
+            return new static((int) $value);
+        } catch (InvalidArgumentException) {
+            return null;
+        }
+    }
+
+    /**
+     * Creates a new instance from the given array and key.
+     * Uses default if the value is invalid or not present.
+     * Throws an exception if the resulting value is invalid.
+     *
+     * @param  array<string, mixed>  $array
+     *
+     * @throws InvalidArgumentException If the value is invalid
+     */
+    public static function fromArray(array $array, string $key, int $default = 0): static
+    {
+        $value = Arr::get($array, $key, $default);
+
+        if ($value === null) {
+            return new static($default);
+        }
+
+        return new static((int) $value);
     }
 
     public function value(): int

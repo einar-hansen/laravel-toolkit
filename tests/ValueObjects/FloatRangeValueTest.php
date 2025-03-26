@@ -201,4 +201,66 @@ class FloatRangeValueTest extends TestCase
             $this->assertNull($instance, 'Expected null for input: '.$input);
         }
     }
+
+    public function test_try_from_array_method_returns_instance_with_valid_float_value(): void
+    {
+        $array = ['amount' => 50.25];
+        $instance = TestFloatRangeValue::tryFromArray($array, 'amount');
+
+        $this->assertInstanceOf(TestFloatRangeValue::class, $instance);
+        $this->assertEquals(50.25, $instance->value());
+    }
+
+    public function test_try_from_array_method_returns_instance_with_valid_string_value(): void
+    {
+        $array = ['amount' => '42.5'];
+        $instance = TestFloatRangeValue::tryFromArray($array, 'amount');
+
+        $this->assertInstanceOf(TestFloatRangeValue::class, $instance);
+        $this->assertEquals(42.5, $instance->value());
+    }
+
+    public function test_try_from_array_method_returns_null_with_invalid_float_value(): void
+    {
+        $array = ['amount' => -0.01]; // Below min value
+        $instance = TestFloatRangeValue::tryFromArray($array, 'amount');
+        $this->assertNull($instance);
+
+        $array = ['amount' => 100.01]; // Above max value
+        $instance = TestFloatRangeValue::tryFromArray($array, 'amount');
+        $this->assertNull($instance);
+    }
+
+    public function test_try_from_array_method_returns_null_with_missing_key_for_float(): void
+    {
+        $array = ['other' => 50.25];
+        $instance = TestFloatRangeValue::tryFromArray($array, 'amount');
+        $this->assertNull($instance);
+    }
+
+    public function test_from_array_method_creates_instance_with_valid_float_value(): void
+    {
+        $array = ['amount' => 50.25];
+        $instance = TestFloatRangeValue::fromArray($array, 'amount');
+
+        $this->assertInstanceOf(TestFloatRangeValue::class, $instance);
+        $this->assertEquals(50.25, $instance->value());
+    }
+
+    public function test_from_array_method_uses_default_with_missing_key_for_float(): void
+    {
+        $array = ['other' => 50.25];
+        $instance = TestFloatRangeValue::fromArray($array, 'amount', 25.5);
+
+        $this->assertInstanceOf(TestFloatRangeValue::class, $instance);
+        $this->assertEquals(25.5, $instance->value());
+    }
+
+    public function test_from_array_method_throws_exception_with_invalid_float_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $array = ['amount' => -0.01]; // Below min value
+        TestFloatRangeValue::fromArray($array, 'amount');
+    }
 }
