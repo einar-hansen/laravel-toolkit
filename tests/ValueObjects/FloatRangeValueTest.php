@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class FloatRangeValueTest extends TestCase
 {
-    public function testCanCreateValidFloatRangeValue(): void
+    public function test_can_create_valid_float_range_value(): void
     {
         $value = 50.25;
         $floatValue = new TestFloatRangeValue($value);
@@ -21,7 +21,7 @@ class FloatRangeValueTest extends TestCase
         $this->assertEquals('50.25', (string) $floatValue);
     }
 
-    public function testThrowsExceptionWhenFloatExceedsMaxValue(): void
+    public function test_throws_exception_when_float_exceeds_max_value(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Float value exceeds maximum of');
@@ -29,7 +29,7 @@ class FloatRangeValueTest extends TestCase
         new TestFloatRangeValue(100.01);
     }
 
-    public function testThrowsExceptionWhenFloatBelowMinValue(): void
+    public function test_throws_exception_when_float_below_min_value(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Float value is less than minimum of');
@@ -37,7 +37,7 @@ class FloatRangeValueTest extends TestCase
         new TestFloatRangeValue(-0.01);
     }
 
-    public function testCanCreateFloatWithMaximumValue(): void
+    public function test_can_create_float_with_maximum_value(): void
     {
         $maxValue = 100.0;
         $floatValue = new TestFloatRangeValue($maxValue);
@@ -46,7 +46,7 @@ class FloatRangeValueTest extends TestCase
         $this->assertEquals('100.00', (string) $floatValue);
     }
 
-    public function testCanCreateFloatWithMinimumValue(): void
+    public function test_can_create_float_with_minimum_value(): void
     {
         $minValue = 0.0;
         $floatValue = new TestFloatRangeValue($minValue);
@@ -55,7 +55,7 @@ class FloatRangeValueTest extends TestCase
         $this->assertEquals('0.00', (string) $floatValue);
     }
 
-    public function testStringRepresentationHasCorrectPrecision(): void
+    public function test_string_representation_has_correct_precision(): void
     {
         $tests = [
             [42.0, '42.00'],
