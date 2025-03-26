@@ -10,11 +10,6 @@ use EinarHansen\Toolkit\ValueObjects\DateRangeValue;
 
 class TestDateRangeValue extends DateRangeValue
 {
-    public function __construct(string|CarbonInterface $value)
-    {
-        parent::__construct($value);
-    }
-
     protected function getMaxDate(): ?CarbonInterface
     {
         return Carbon::parse('2025-12-31');

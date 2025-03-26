@@ -9,11 +9,6 @@ use Override;
 
 class TestStringLengthValue extends StringLengthValue
 {
-    public function __construct(string $value)
-    {
-        parent::__construct($value);
-    }
-
     #[Override]
     protected function getMaxLength(): ?int
     {
