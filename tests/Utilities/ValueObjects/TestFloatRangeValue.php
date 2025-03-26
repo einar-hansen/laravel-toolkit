@@ -8,11 +8,6 @@ use EinarHansen\Toolkit\ValueObjects\FloatRangeValue;
 
 class TestFloatRangeValue extends FloatRangeValue
 {
-    public function __construct(float $value)
-    {
-        parent::__construct($value);
-    }
-
     protected function getMaxValue(): ?float
     {
         return 100.0;

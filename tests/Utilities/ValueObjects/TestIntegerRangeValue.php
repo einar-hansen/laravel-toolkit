@@ -9,11 +9,6 @@ use Override;
 
 class TestIntegerRangeValue extends IntegerRangeValue
 {
-    public function __construct(int $value)
-    {
-        parent::__construct($value);
-    }
-
     #[Override]
     protected function getMaxValue(): ?int
     {

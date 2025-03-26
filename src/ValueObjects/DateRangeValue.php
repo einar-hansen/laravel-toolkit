@@ -14,7 +14,7 @@ abstract class DateRangeValue implements Stringable
 {
     protected readonly CarbonInterface $date;
 
-    protected function __construct(
+    public function __construct(
         string|CarbonInterface $value
     ) {
         $this->date = $this->parseDate($value);

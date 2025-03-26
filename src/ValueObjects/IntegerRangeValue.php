@@ -9,7 +9,7 @@ use Stringable;
 
 abstract class IntegerRangeValue implements Stringable
 {
-    protected function __construct(
+    public function __construct(
         protected readonly int $value
     ) {
         $this->validate();

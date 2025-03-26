@@ -9,7 +9,7 @@ use Stringable;
 
 abstract class FloatRangeValue implements Stringable
 {
-    protected function __construct(
+    public function __construct(
         protected readonly float $value
     ) {
         $this->validate();

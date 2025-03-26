@@ -10,7 +10,7 @@ use Stringable;
 
 abstract class StringLengthValue implements Stringable
 {
-    protected function __construct(
+    public function __construct(
         protected readonly string $value
     ) {
         $this->validate();
