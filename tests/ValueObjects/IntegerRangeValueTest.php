@@ -54,4 +54,37 @@ class IntegerRangeValueTest extends TestCase
         $this->assertEquals($minValue, $testIntegerRangeValue->value());
         $this->assertEquals((string) $minValue, (string) $testIntegerRangeValue);
     }
+
+    public function test_from_method_creates_instance_with_valid_value(): void
+    {
+        $value = 50;
+        $instance = TestIntegerRangeValue::from($value);
+
+        $this->assertInstanceOf(TestIntegerRangeValue::class, $instance);
+        $this->assertEquals($value, $instance->value());
+    }
+
+    public function test_from_method_throws_exception_with_invalid_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        TestIntegerRangeValue::from(0); // Below min value
+    }
+
+    public function test_try_from_method_returns_instance_with_valid_value(): void
+    {
+        $value = 50;
+        $instance = TestIntegerRangeValue::tryFrom($value);
+
+        $this->assertInstanceOf(TestIntegerRangeValue::class, $instance);
+        $this->assertEquals($value, $instance->value());
+    }
+
+    public function test_try_from_method_returns_null_with_invalid_value(): void
+    {
+        $instance = TestIntegerRangeValue::tryFrom(0); // Below min value
+        $this->assertNull($instance);
+
+        $instance = TestIntegerRangeValue::tryFrom(101); // Above max value
+        $this->assertNull($instance);
+    }
 }

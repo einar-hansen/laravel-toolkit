@@ -54,4 +54,37 @@ class StringLengthValueTest extends TestCase
         $this->assertEquals(5, mb_strlen($testStringLengthValue->value()));
         $this->assertEquals($minLengthString, (string) $testStringLengthValue);
     }
+
+    public function test_from_method_creates_instance_with_valid_value(): void
+    {
+        $value = 'Valid string';
+        $instance = TestStringLengthValue::from($value);
+
+        $this->assertInstanceOf(TestStringLengthValue::class, $instance);
+        $this->assertEquals($value, $instance->value());
+    }
+
+    public function test_from_method_throws_exception_with_invalid_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        TestStringLengthValue::from('abcd'); // Below min length
+    }
+
+    public function test_try_from_method_returns_instance_with_valid_value(): void
+    {
+        $value = 'Valid string';
+        $instance = TestStringLengthValue::tryFrom($value);
+
+        $this->assertInstanceOf(TestStringLengthValue::class, $instance);
+        $this->assertEquals($value, $instance->value());
+    }
+
+    public function test_try_from_method_returns_null_with_invalid_value(): void
+    {
+        $instance = TestStringLengthValue::tryFrom('abcd'); // Below min length
+        $this->assertNull($instance);
+
+        $instance = TestStringLengthValue::tryFrom(str_repeat('a', 51)); // Above max length
+        $this->assertNull($instance);
+    }
 }

@@ -42,6 +42,36 @@ abstract class IntegerRangeValue implements Stringable
         }
     }
 
+    /**
+     * Attempts to create a new instance from the given value.
+     * Returns null if the value is invalid.
+     *
+     * @param  int  $value  The value to parse
+     * @return static|null The new instance or null on failure
+     */
+    public static function tryFrom(int $value): ?static
+    {
+        try {
+            return new static($value);
+        } catch (InvalidArgumentException) {
+            return null;
+        }
+    }
+
+    /**
+     * Creates a new instance from the given value.
+     * Throws an exception if the value is invalid.
+     *
+     * @param  int  $value  The value to parse
+     * @return static The new instance
+     *
+     * @throws InvalidArgumentException If the value is invalid
+     */
+    public static function from(int $value): static
+    {
+        return new static($value);
+    }
+
     public function value(): int
     {
         return $this->value;
