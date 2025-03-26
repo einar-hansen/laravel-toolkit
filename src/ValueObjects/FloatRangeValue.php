@@ -115,6 +115,16 @@ abstract class FloatRangeValue implements Stringable
         return $this->value;
     }
 
+    public function string(): string
+    {
+        return $this->__toString();
+    }
+
+    public function integer(): float
+    {
+        return (int) $this->value;
+    }
+
     public function __toString(): string
     {
         return number_format($this->value, $this->getPrecision(), '.', '');

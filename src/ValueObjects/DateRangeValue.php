@@ -105,6 +105,11 @@ abstract class DateRangeValue implements Stringable
         return $this->date;
     }
 
+    public function string(): string
+    {
+        return $this->__toString();
+    }
+
     public function __toString(): string
     {
         return $this->date->format($this->getDateFormat());

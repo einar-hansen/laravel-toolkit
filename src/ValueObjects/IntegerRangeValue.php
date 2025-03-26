@@ -77,6 +77,16 @@ abstract class IntegerRangeValue implements Stringable
         return $this->value;
     }
 
+    public function float(): float
+    {
+        return (float) $this->value;
+    }
+
+    public function string(): string
+    {
+        return $this->__toString();
+    }
+
     public function __toString(): string
     {
         return (string) $this->value;
