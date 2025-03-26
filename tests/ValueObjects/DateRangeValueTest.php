@@ -107,4 +107,55 @@ class DateRangeValueTest extends TestCase
 
         new TestDateRangeValue('not a date');
     }
+
+    public function test_from_method_creates_instance_with_valid_value(): void
+    {
+        $value = '2022-06-15';
+        $instance = TestDateRangeValue::from($value);
+
+        $this->assertInstanceOf(TestDateRangeValue::class, $instance);
+        $this->assertEquals(Carbon::parse($value)->format('Y-m-d'), (string) $instance);
+    }
+
+    public function test_from_method_throws_exception_with_invalid_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        TestDateRangeValue::from('2019-12-31'); // Before min date
+    }
+
+    public function test_try_from_method_returns_instance_with_valid_value(): void
+    {
+        $value = '2022-06-15';
+        $instance = TestDateRangeValue::tryFrom($value);
+
+        $this->assertInstanceOf(TestDateRangeValue::class, $instance);
+        $this->assertEquals(Carbon::parse($value)->format('Y-m-d'), (string) $instance);
+    }
+
+    public function test_try_from_method_returns_null_with_invalid_value(): void
+    {
+        $instance = TestDateRangeValue::tryFrom('2019-12-31'); // Before min date
+        $this->assertNull($instance);
+
+        $instance = TestDateRangeValue::tryFrom('not a date'); // Invalid format
+        $this->assertNull($instance);
+    }
+
+    public function test_from_method_creates_instance_with_carbon_instance(): void
+    {
+        $carbonDate = Carbon::parse('2022-06-15');
+        $instance = TestDateRangeValue::from($carbonDate);
+
+        $this->assertInstanceOf(TestDateRangeValue::class, $instance);
+        $this->assertEquals('2022-06-15', (string) $instance);
+    }
+
+    public function test_try_from_method_returns_instance_with_carbon_instance(): void
+    {
+        $carbonDate = Carbon::parse('2022-06-15');
+        $instance = TestDateRangeValue::tryFrom($carbonDate);
+
+        $this->assertInstanceOf(TestDateRangeValue::class, $instance);
+        $this->assertEquals('2022-06-15', (string) $instance);
+    }
 }

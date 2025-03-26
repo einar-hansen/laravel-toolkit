@@ -70,4 +70,135 @@ class FloatRangeValueTest extends TestCase
             $this->assertEquals($expected, (string) $floatValue);
         }
     }
+
+    public function test_from_method_creates_instance_with_valid_value(): void
+    {
+        $value = 50.25;
+        $instance = TestFloatRangeValue::from($value);
+
+        $this->assertInstanceOf(TestFloatRangeValue::class, $instance);
+        $this->assertEquals($value, $instance->value());
+    }
+
+    public function test_from_method_throws_exception_with_invalid_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        TestFloatRangeValue::from(-0.01); // Below min value
+    }
+
+    public function test_try_from_method_returns_instance_with_valid_value(): void
+    {
+        $value = 50.25;
+        $instance = TestFloatRangeValue::tryFrom($value);
+
+        $this->assertInstanceOf(TestFloatRangeValue::class, $instance);
+        $this->assertEquals($value, $instance->value());
+    }
+
+    public function test_try_from_method_returns_null_with_invalid_value(): void
+    {
+        $instance = TestFloatRangeValue::tryFrom(-0.01); // Below min value
+        $this->assertNull($instance);
+
+        $instance = TestFloatRangeValue::tryFrom(100.01); // Above max value
+        $this->assertNull($instance);
+    }
+
+    // New tests for parsing integers
+    public function test_can_create_from_integer_value(): void
+    {
+        $intValue = 42;
+        $floatValue = new TestFloatRangeValue($intValue);
+
+        $this->assertEquals(42.0, $floatValue->value());
+        $this->assertEquals('42.00', (string) $floatValue);
+    }
+
+    public function test_from_method_handles_integer_value(): void
+    {
+        $intValue = 75;
+        $instance = TestFloatRangeValue::from($intValue);
+
+        $this->assertInstanceOf(TestFloatRangeValue::class, $instance);
+        $this->assertEquals(75.0, $instance->value());
+    }
+
+    public function test_try_from_method_handles_integer_value(): void
+    {
+        $intValue = 50;
+        $instance = TestFloatRangeValue::tryFrom($intValue);
+
+        $this->assertInstanceOf(TestFloatRangeValue::class, $instance);
+        $this->assertEquals(50.0, $instance->value());
+    }
+
+    // New tests for parsing strings
+    public function test_from_method_handles_valid_string_values(): void
+    {
+        $testCases = [
+            ['42', 42.0],
+            ['42.5', 42.5],
+            [' 42.5 ', 42.5],  // Test trimming
+            ['42,5', 42.5],    // Test comma as decimal separator
+            ['0', 0.0],
+            ['100', 100.0],
+        ];
+
+        foreach ($testCases as [$input, $expected]) {
+            $instance = TestFloatRangeValue::from($input);
+            $this->assertEquals($expected, $instance->value(), 'Failed parsing string: '.$input);
+        }
+    }
+
+    public function test_from_method_throws_exception_with_invalid_string_value(): void
+    {
+        $testCases = [
+            'abc',        // Non-numeric string
+            '42a',        // Partially numeric string
+            '',           // Empty string
+            '42,5,6',     // Multiple decimal separators
+        ];
+
+        foreach ($testCases as $input) {
+            try {
+                TestFloatRangeValue::from($input);
+                $this->fail('Expected exception for input: '.$input);
+            } catch (InvalidArgumentException $e) {
+                $this->assertStringContainsString('Cannot parse', $e->getMessage());
+            }
+        }
+    }
+
+    public function test_try_from_method_handles_valid_string_values(): void
+    {
+        $testCases = [
+            ['42', 42.0],
+            ['42.5', 42.5],
+            [' 42.5 ', 42.5],  // Test trimming
+            ['42,5', 42.5],    // Test comma as decimal separator
+        ];
+
+        foreach ($testCases as [$input, $expected]) {
+            $instance = TestFloatRangeValue::tryFrom($input);
+            $this->assertNotNull($instance, 'Failed parsing string: '.$input);
+            $this->assertEquals($expected, $instance->value());
+        }
+    }
+
+    public function test_try_from_method_returns_null_with_invalid_string_value(): void
+    {
+        $testCases = [
+            'abc',        // Non-numeric string
+            '42a',        // Partially numeric string
+            '',           // Empty string
+            '42,5,6',     // Multiple decimal separators
+            '-1',         // Below minimum
+            '101',        // Above maximum
+        ];
+
+        foreach ($testCases as $input) {
+            $instance = TestFloatRangeValue::tryFrom($input);
+            $this->assertNull($instance, 'Expected null for input: '.$input);
+        }
+    }
 }

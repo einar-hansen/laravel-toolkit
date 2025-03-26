@@ -17,3 +17,4 @@ parameters:
         minimumNumberOfJobsPerProcess: 2
 
     ignoreErrors:
+    - '#Unsafe usage of new static\(\)\.#'

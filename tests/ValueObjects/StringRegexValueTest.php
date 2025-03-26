@@ -66,4 +66,34 @@ class StringRegexValueTest extends TestCase
             new TestStringRegexValue($email);
         }
     }
+
+    public function test_from_method_creates_instance_with_valid_value(): void
+    {
+        $value = 'test@example.com';
+        $instance = TestStringRegexValue::from($value);
+
+        $this->assertInstanceOf(TestStringRegexValue::class, $instance);
+        $this->assertEquals($value, $instance->value());
+    }
+
+    public function test_from_method_throws_exception_with_invalid_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        TestStringRegexValue::from('invalid-email');
+    }
+
+    public function test_try_from_method_returns_instance_with_valid_value(): void
+    {
+        $value = 'test@example.com';
+        $instance = TestStringRegexValue::tryFrom($value);
+
+        $this->assertInstanceOf(TestStringRegexValue::class, $instance);
+        $this->assertEquals($value, $instance->value());
+    }
+
+    public function test_try_from_method_returns_null_with_invalid_value(): void
+    {
+        $instance = TestStringRegexValue::tryFrom('invalid-email');
+        $this->assertNull($instance);
+    }
 }
