@@ -48,7 +48,7 @@ abstract class FloatRangeValue implements Stringable
 
         throw new InvalidArgumentException(sprintf(
             'Cannot parse "%s" as a float value for %s',
-            is_string($value) ? $value : gettype($value),
+            $value,
             static::class
         ));
     }
