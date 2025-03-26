@@ -96,4 +96,69 @@ class StringRegexValueTest extends TestCase
         $instance = TestStringRegexValue::tryFrom('invalid-email');
         $this->assertNull($instance);
     }
+
+    public function test_try_from_array_method_returns_instance_with_valid_email(): void
+    {
+        $array = ['email' => 'test@example.com'];
+        $instance = TestStringRegexValue::tryFromArray($array, 'email');
+
+        $this->assertInstanceOf(TestStringRegexValue::class, $instance);
+        $this->assertEquals('test@example.com', $instance->value());
+    }
+
+    public function test_try_from_array_method_returns_null_with_invalid_email(): void
+    {
+        $array = ['email' => 'invalid-email'];
+        $instance = TestStringRegexValue::tryFromArray($array, 'email');
+        $this->assertNull($instance);
+    }
+
+    public function test_try_from_array_method_returns_null_with_missing_key_for_regex(): void
+    {
+        $array = ['other' => 'test@example.com'];
+        $instance = TestStringRegexValue::tryFromArray($array, 'email');
+        $this->assertNull($instance);
+    }
+
+    public function test_from_array_method_creates_instance_with_valid_email(): void
+    {
+        $array = ['email' => 'test@example.com'];
+        $instance = TestStringRegexValue::fromArray($array, 'email');
+
+        $this->assertInstanceOf(TestStringRegexValue::class, $instance);
+        $this->assertEquals('test@example.com', $instance->value());
+    }
+
+    public function test_from_array_method_uses_default_with_missing_key_for_regex(): void
+    {
+        $array = ['other' => 'test@example.com'];
+        $instance = TestStringRegexValue::fromArray($array, 'email', 'default@example.com');
+
+        $this->assertInstanceOf(TestStringRegexValue::class, $instance);
+        $this->assertEquals('default@example.com', $instance->value());
+    }
+
+    public function test_from_array_method_throws_exception_with_invalid_email(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $array = ['email' => 'invalid-email'];
+        TestStringRegexValue::fromArray($array, 'email');
+    }
+
+    public function test_from_array_method_handles_non_string_values(): void
+    {
+        // Testing with a numeric value that can be cast to valid email
+        $array = ['email' => 123];
+        $this->expectException(InvalidArgumentException::class);
+        TestStringRegexValue::fromArray($array, 'email');
+    }
+
+    public function test_from_array_method_uses_empty_default_when_not_specified(): void
+    {
+        $array = ['other' => 'test@example.com'];
+
+        $this->expectException(InvalidArgumentException::class);
+        TestStringRegexValue::fromArray($array, 'email');
+    }
 }

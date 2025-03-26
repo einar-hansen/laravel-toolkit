@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\ValueObjects;
 
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Override;
 use Stringable;
@@ -52,9 +53,6 @@ abstract class StringRegexValue implements Stringable
     /**
      * Attempts to create a new instance from the given value.
      * Returns null if the value is invalid.
-     *
-     * @param  string  $value  The value to parse
-     * @return static|null The new instance or null on failure
      */
     public static function tryFrom(string $value): ?static
     {
@@ -66,17 +64,49 @@ abstract class StringRegexValue implements Stringable
     }
 
     /**
+     * Attempts to create a new instance from the given value.
+     * Returns null if the value is invalid.
+     *
+     * @param  array<string, mixed>  $array
+     */
+    public static function tryFromArray(array $array, string $key): ?static
+    {
+        $value = Arr::get($array, $key);
+        try {
+            return $value === null ? null : new static((string) $value);
+        } catch (InvalidArgumentException) {
+            return null;
+        }
+    }
+
+    /**
      * Creates a new instance from the given value.
      * Throws an exception if the value is invalid.
-     *
-     * @param  string  $value  The value to parse
-     * @return static The new instance
      *
      * @throws InvalidArgumentException If the value is invalid
      */
     public static function from(string $value): static
     {
         return new static($value);
+    }
+
+    /**
+     * Creates a new instance from the given value.
+     * Throws an exception if the value is invalid.
+     *
+     * @param  array<string, mixed>  $array
+     *
+     * @throws InvalidArgumentException If the value is invalid
+     */
+    public static function fromArray(array $array, string $key, string $default = ''): static
+    {
+        $value = Arr::get($array, $key, $default);
+
+        if ($value === null) {
+            return new static($default);
+        }
+
+        return new static(is_string($value) ? $value : (string) $value);
     }
 
     /**

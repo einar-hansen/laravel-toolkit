@@ -87,4 +87,57 @@ class IntegerRangeValueTest extends TestCase
         $instance = TestIntegerRangeValue::tryFrom(101); // Above max value
         $this->assertNull($instance);
     }
+
+    public function test_try_from_array_method_returns_instance_with_valid_value(): void
+    {
+        $array = ['count' => 50];
+        $instance = TestIntegerRangeValue::tryFromArray($array, 'count');
+
+        $this->assertInstanceOf(TestIntegerRangeValue::class, $instance);
+        $this->assertEquals(50, $instance->value());
+    }
+
+    public function test_try_from_array_method_returns_null_with_invalid_value(): void
+    {
+        $array = ['count' => 0]; // Below min value
+        $instance = TestIntegerRangeValue::tryFromArray($array, 'count');
+        $this->assertNull($instance);
+
+        $array = ['count' => 101]; // Above max value
+        $instance = TestIntegerRangeValue::tryFromArray($array, 'count');
+        $this->assertNull($instance);
+    }
+
+    public function test_try_from_array_method_returns_null_with_missing_key(): void
+    {
+        $array = ['other' => 50];
+        $instance = TestIntegerRangeValue::tryFromArray($array, 'count');
+        $this->assertNull($instance);
+    }
+
+    public function test_from_array_method_creates_instance_with_valid_value(): void
+    {
+        $array = ['count' => 50];
+        $instance = TestIntegerRangeValue::fromArray($array, 'count');
+
+        $this->assertInstanceOf(TestIntegerRangeValue::class, $instance);
+        $this->assertEquals(50, $instance->value());
+    }
+
+    public function test_from_array_method_uses_default_with_missing_key(): void
+    {
+        $array = ['other' => 50];
+        $instance = TestIntegerRangeValue::fromArray($array, 'count', 25);
+
+        $this->assertInstanceOf(TestIntegerRangeValue::class, $instance);
+        $this->assertEquals(25, $instance->value());
+    }
+
+    public function test_from_array_method_throws_exception_with_invalid_value(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $array = ['count' => 0]; // Below min value
+        TestIntegerRangeValue::fromArray($array, 'count');
+    }
 }
