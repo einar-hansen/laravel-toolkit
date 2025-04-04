@@ -27,6 +27,42 @@ class ArrMixin
         };
     }
 
+    /**
+     * Check if a key exists in the array and its value is not null.
+     *
+     * Mimics the behavior of PHP's isset() function for array elements accessed
+     * via dot notation. Returns true only if the key path resolves and the
+     * resulting value is not null.
+     *
+     * @return Closure(array<array-key, mixed>, string):bool
+     */
+    public function isset()
+    {
+        return function (array $array, string $key): bool {
+            if (! Arr::has($array, $key)) {
+                return false;
+            }
+
+            return Arr::get($array, $key) !== null;
+        };
+    }
+
+    /**
+     * Check if an array element accessed via dot notation is "empty".
+     *
+     * Mimics the behavior of PHP's empty() function. Returns true if the key
+     * does not exist, or if the resolved value is considered empty by PHP
+     * (null, false, 0, 0.0, "0", "", []).
+     *
+     * Note: Unlike isset(), empty() *can* be used on the result of a function call.
+     *
+     * @return Closure(array<array-key, mixed>, string):bool
+     */
+    public function isEmpty() // Renamed from the commented version for clarity
+    {
+        return fn (array $array, string $key): bool => empty(Arr::get($array, $key));
+    }
+
     public function string(): Closure
     {
         return function (array $array, string $key, string $default = ''): string {
