@@ -23,7 +23,7 @@ final class ResponseMixinTest extends TestCase
     private MockObject&Response $mockResponse;
 
     /** @var resource|null */
-    private $stream = null; // Property to hold the stream for cleanup
+    private $stream; // Property to hold the stream for cleanup
 
     #[Before]
     public function setUpTest(): void

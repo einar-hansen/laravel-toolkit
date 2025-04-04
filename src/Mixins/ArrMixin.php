@@ -6,13 +6,14 @@ namespace EinarHansen\Toolkit\Mixins;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Closure;
 use DateTimeInterface;
 use Exception;
 use Illuminate\Support\Arr;
 
 class ArrMixin
 {
-    public function tryKeys()
+    public function tryKeys(): Closure
     {
         return function (array $array, string ...$keys) {
             foreach ($keys as $key) {
@@ -26,7 +27,7 @@ class ArrMixin
         };
     }
 
-    public function string()
+    public function string(): Closure
     {
         return function (array $array, string $key, string $default = ''): string {
             $value = Arr::get($array, $key, $default);
@@ -39,7 +40,7 @@ class ArrMixin
         };
     }
 
-    public function stringOrNull()
+    public function stringOrNull(): Closure
     {
         return function (array $array, string $key): ?string {
             $value = Arr::get($array, $key);
@@ -48,13 +49,14 @@ class ArrMixin
         };
     }
 
-    public function integer()
+    public function integer(): Closure
     {
         return function (array $array, string $key, int $default = 0): int {
             $value = Arr::get($array, $key, $default);
             if ($value === null) {
                 return $default;
             }
+
             if (is_bool($value)) {
                 return $value ? 1 : 0;
             }
@@ -63,7 +65,7 @@ class ArrMixin
         };
     }
 
-    public function integerOrNull()
+    public function integerOrNull(): Closure
     {
         return function (array $array, string $key): ?int {
             $value = Arr::get($array, $key);
@@ -75,13 +77,14 @@ class ArrMixin
         };
     }
 
-    public function float()
+    public function float(): Closure
     {
         return function (array $array, string $key, float $default = 0.0): float {
             $value = Arr::get($array, $key, $default);
             if ($value === null) {
                 return $default;
             }
+
             if (is_bool($value)) {
                 return $value ? 1 : 0;
             }
@@ -90,7 +93,7 @@ class ArrMixin
         };
     }
 
-    public function floatOrNull()
+    public function floatOrNull(): Closure
     {
         return function (array $array, string $key): ?float {
             $value = Arr::get($array, $key);
@@ -102,7 +105,7 @@ class ArrMixin
         };
     }
 
-    public function boolean()
+    public function boolean(): Closure
     {
         return function (array $array, string $key, bool $default = false): bool {
             $value = Arr::get($array, $key, $default);
@@ -137,7 +140,7 @@ class ArrMixin
         };
     }
 
-    public function booleanOrNull()
+    public function booleanOrNull(): Closure
     {
         return function (array $array, string $key): ?bool {
             $value = Arr::get($array, $key);
@@ -172,7 +175,7 @@ class ArrMixin
         };
     }
 
-    public function date()
+    public function date(): Closure
     {
         return function (array $array, string $key, $default = null): CarbonImmutable {
             $value = Arr::get($array, $key);
@@ -209,7 +212,7 @@ class ArrMixin
         };
     }
 
-    public function dateOrNull()
+    public function dateOrNull(): Closure
     {
         return function (array $array, string $key): ?CarbonImmutable {
             $value = Arr::get($array, $key);
@@ -230,7 +233,7 @@ class ArrMixin
         };
     }
 
-    public function dateTime()
+    public function dateTime(): Closure
     {
         return function (array $array, string $key, $default = null): CarbonInterface {
             $value = Arr::get($array, $key);
@@ -268,7 +271,7 @@ class ArrMixin
         };
     }
 
-    public function dateTimeOrNull()
+    public function dateTimeOrNull(): Closure
     {
         return function (array $array, string $key): ?CarbonInterface {
             $value = Arr::get($array, $key);

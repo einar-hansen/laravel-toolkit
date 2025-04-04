@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\Tests\Mixins;
 
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use DateTime;
@@ -13,7 +14,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\EinarHansen\Toolkit\Mixins\ArrMixin::class)]
+#[CoversClass(ArrMixin::class)]
 final class ArrMixinTest extends TestCase
 {
     private ArrMixin $arrMixin;
@@ -435,6 +436,7 @@ final class ArrMixinTest extends TestCase
                 $orNullCases[$name] = [$case[0], $case[1], $case[3]];
             }
         }
+
         // Add specific check for empty array
         $orNullCases['empty array -> null'] = [[], 'flag', null];
 
@@ -457,7 +459,7 @@ final class ArrMixinTest extends TestCase
     {
         $nowDateString = CarbonImmutable::create(2024, 5, 15, 12, 30, 45, 'UTC')->toDateString();
         $defaultDateString = '2023-01-01';
-        $defaultDateTime = new DateTime('2023-01-01 15:00:00'); // Time should be ignored
+        $defaultDateTime = Carbon::parse('2023-01-01 15:00:00'); // Time should be ignored
         $validDateString = '2024-02-20';
         $validDateTimeString = '2024-03-10 10:20:30'; // Time should be ignored
         $validDateTimeObj = new DateTime($validDateTimeString);
@@ -617,7 +619,7 @@ final class ArrMixinTest extends TestCase
         $closure = $this->arrMixin->dateTimeOrNull();
         $result = $closure($array, $key);
 
-        if ($expectedDateTime === null) {
+        if (! $expectedDateTime instanceof CarbonInterface) {
             $this->assertNull($result);
         } else {
             $this->assertInstanceOf(CarbonInterface::class, $result);
