@@ -72,6 +72,126 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
+    #[DataProvider('issetProvider')]
+    #[Test]
+    public function it_checks_if_key_is_set(array $array, string $key, bool $expected): void
+    {
+        $closure = $this->arrMixin->isset();
+        $result = $closure($array, $key);
+        $this->assertSame($expected, $result);
+    }
+
+    public static function issetProvider(): array
+    {
+        $data = [
+            'string_val' => 'hello',
+            'int_val' => 123,
+            'zero_int' => 0,         // isset(0) is true
+            'float_val' => 1.23,
+            'zero_float' => 0.0,       // isset(0.0) is true
+            'bool_true' => true,       // isset(true) is true
+            'bool_false' => false,      // isset(false) is true
+            'null_val' => null,        // isset(null) is false
+            'empty_string' => '',       // isset('') is true
+            'zero_string' => '0',        // isset('0') is true
+            'empty_array' => [],       // isset([]) is true
+            'non_empty_array' => [1], // isset([1]) is true
+            'nested' => [
+                'level1' => 'value1',
+                'level1_null' => null,
+                'level1_zero' => 0,
+                'level1_false' => false,
+                'level1_empty_string' => '',
+            ],
+        ];
+
+        return [
+            'string value' => [$data, 'string_val', true],
+            'integer value' => [$data, 'int_val', true],
+            'zero integer value' => [$data, 'zero_int', true],
+            'float value' => [$data, 'float_val', true],
+            'zero float value' => [$data, 'zero_float', true],
+            'boolean true value' => [$data, 'bool_true', true],
+            'boolean false value' => [$data, 'bool_false', true], // Important: isset(false) is true
+            'null value' => [$data, 'null_val', false],            // Important: isset(null) is false
+            'empty string value' => [$data, 'empty_string', true],
+            'zero string value' => [$data, 'zero_string', true],
+            'empty array value' => [$data, 'empty_array', true],
+            'non-empty array value' => [$data, 'non_empty_array', true],
+            'non-existent key' => [$data, 'non_existent_key', false],
+            'nested existing value' => [$data, 'nested.level1', true],
+            'nested null value' => [$data, 'nested.level1_null', false],
+            'nested zero value' => [$data, 'nested.level1_zero', true],
+            'nested false value' => [$data, 'nested.level1_false', true],
+            'nested empty string value' => [$data, 'nested.level1_empty_string', true],
+            'nested non-existent key' => [$data, 'nested.missing', false],
+            'nested key path partly exists' => [$data, 'string_val.missing', false], // 'string_val' exists but is not array
+            'nested path to top-level array' => [$data, 'nested', true], // 'nested' key itself exists and is not null
+            'empty input array' => [[], 'any_key', false],
+        ];
+    }
+
+    #[DataProvider('isEmptyProvider')]
+    #[Test]
+    public function it_checks_if_key_is_empty(array $array, string $key, bool $expected): void
+    {
+        $closure = $this->arrMixin->isEmpty();
+        $result = $closure($array, $key);
+        $this->assertSame($expected, $result);
+    }
+
+    public static function isEmptyProvider(): array
+    {
+        $data = [
+            'string_val' => 'hello',   // not empty
+            'int_val' => 123,      // not empty
+            'zero_int' => 0,         // empty
+            'float_val' => 1.23,     // not empty
+            'zero_float' => 0.0,       // empty
+            'bool_true' => true,       // not empty
+            'bool_false' => false,      // empty
+            'null_val' => null,        // empty
+            'empty_string' => '',       // empty
+            'zero_string' => '0',        // empty
+            'empty_array' => [],       // empty
+            'non_empty_array' => [1], // not empty
+            'nested' => [
+                'level1' => 'value1',          // not empty
+                'level1_null' => null,         // empty
+                'level1_zero' => 0,            // empty
+                'level1_false' => false,       // empty
+                'level1_empty_string' => '',   // empty
+                'level1_non_empty_array' => [0], // not empty
+            ],
+        ];
+
+        return [
+            'string value' => [$data, 'string_val', false],
+            'integer value' => [$data, 'int_val', false],
+            'zero integer value' => [$data, 'zero_int', true],
+            'float value' => [$data, 'float_val', false],
+            'zero float value' => [$data, 'zero_float', true],
+            'boolean true value' => [$data, 'bool_true', false],
+            'boolean false value' => [$data, 'bool_false', true],
+            'null value' => [$data, 'null_val', true],
+            'empty string value' => [$data, 'empty_string', true],
+            'zero string value' => [$data, 'zero_string', true],
+            'empty array value' => [$data, 'empty_array', true],
+            'non-empty array value' => [$data, 'non_empty_array', false],
+            'non-existent key' => [$data, 'non_existent_key', true], // Important: non-existent is empty
+            'nested existing value' => [$data, 'nested.level1', false],
+            'nested null value' => [$data, 'nested.level1_null', true],
+            'nested zero value' => [$data, 'nested.level1_zero', true],
+            'nested false value' => [$data, 'nested.level1_false', true],
+            'nested empty string value' => [$data, 'nested.level1_empty_string', true],
+            'nested non-empty array value' => [$data, 'nested.level1_non_empty_array', false],
+            'nested non-existent key' => [$data, 'nested.missing', true],
+            'nested key path partly exists' => [$data, 'string_val.missing', true], // Arr::get returns null, empty(null) is true
+            'nested path to non-empty top-level array' => [$data, 'nested', false], // 'nested' key resolves to a non-empty array
+            'empty input array' => [[], 'any_key', true],
+        ];
+    }
+
     #[DataProvider('stringProvider')]
     #[Test]
     public function it_can_get_a_value_as_string_with_default(array $array, string $key, string $default, string $expected): void
