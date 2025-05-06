@@ -15,7 +15,7 @@ return RectorConfig::configure()
         cacheClass: FileCacheStorage::class,
     )
     ->withImportNames(removeUnusedImports: true)
-    ->withPhpSets(php82: true)
+    ->withPhpSets(php83: true)
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
