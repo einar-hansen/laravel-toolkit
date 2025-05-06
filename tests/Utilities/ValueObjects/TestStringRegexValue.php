@@ -7,7 +7,7 @@ namespace EinarHansen\Toolkit\Tests\Utilities\ValueObjects;
 use EinarHansen\Toolkit\ValueObjects\StringRegexValue;
 use Override;
 
-class TestStringRegexValue extends StringRegexValue
+final class TestStringRegexValue extends StringRegexValue
 {
     /**
      * Example pattern for email validation

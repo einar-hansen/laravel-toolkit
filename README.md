@@ -8,4 +8,18 @@ Build better Laravel apps, faster.
 
 # Requirements
 
-* Laravel v11 and above
+* Laravel v12 and above
+
+# Environment variables
+
+```dotenv
+ELOQUENT_STRICT_MODE=true
+ELOQUENT_EAGER_LOAD_RELATIONSHIPS=false
+APP_ENABLE_AGGRESSIVE_PREFETCHING=true
+APP_ENFORCE_HTTPS_SCHEME=true
+APP_ENABLE_IMMUTABLE_DATES=true
+APP_DISABLE_DESTRUCTIVE_COMMANDS=true
+APP_USE_DEFAULT_PASSWORD=true
+TESTS_ENABLE_FAKE_SLEEP=true
+TESTS_PREVENT_STRAY_REQUESTS=true
+```

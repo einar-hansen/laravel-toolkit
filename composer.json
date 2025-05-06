@@ -20,13 +20,19 @@
     "require": {
         "php": "^8.4",
         "halaxa/json-machine": "^1.2",
+        "illuminate/config": "^12.0",
+        "illuminate/container": "^12.0",
         "illuminate/http": "^12.0",
         "illuminate/support": "^12.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.0.0",
         "laravel/pint": "^1.21",
+        "orchestra/testbench": "^10.2.1",
+        "phpstan/phpstan": "^2.1.12",
         "phpunit/phpunit": "^11.5.3|^12.0.1",
+        "rector/rector": "^2.0.11",
+        "symfony/var-dumper": "^7.2.3",
         "tomasvotruba/type-coverage": "^2.0.2"
     },
     "autoload": {
@@ -37,6 +43,13 @@
     "autoload-dev": {
         "psr-4": {
             "EinarHansen\\Toolkit\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "EinarHansen\\Toolkit\\ToolkitServiceProvider"
+            ]
         }
     },
     "scripts": {

@@ -7,7 +7,7 @@ namespace EinarHansen\Toolkit\Tests\Utilities\ValueObjects;
 use EinarHansen\Toolkit\ValueObjects\IntegerRangeValue;
 use Override;
 
-class TestIntegerRangeValue extends IntegerRangeValue
+final class TestIntegerRangeValue extends IntegerRangeValue
 {
     #[Override]
     protected function getMaxValue(): ?int

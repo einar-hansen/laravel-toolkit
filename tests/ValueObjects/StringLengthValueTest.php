@@ -9,7 +9,7 @@ use EinarHansen\Toolkit\ValueObjects\StringLengthValue;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-class StringLengthValueTest extends TestCase
+final class StringLengthValueTest extends TestCase
 {
     public function test_can_create_valid_string_length_value(): void
     {

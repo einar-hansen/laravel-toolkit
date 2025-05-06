@@ -25,81 +25,6 @@ final class ResponseMixinTest extends TestCase
     /** @var resource|null */
     private $stream; // Property to hold the stream for cleanup
 
-    #[Before]
-    public function setUpTest(): void
-    {
-        $this->mixin = new ResponseMixin;
-        // Create a mock Response object
-        $this->mockResponse = $this->createMock(Response::class);
-    }
-
-    #[After]
-    public function tearDownTest(): void
-    {
-        // Ensure the stream is closed after each test
-        if (is_resource($this->stream)) {
-            fclose($this->stream);
-            $this->stream = null;
-        }
-    }
-
-    /**
-     * Helper to create a stream from a JSON string.
-     *
-     * @return resource
-     */
-    private function createJsonStream(string $json)
-    {
-        // Close previous stream if any exists
-        if (is_resource($this->stream)) {
-            fclose($this->stream);
-        }
-
-        $this->stream = fopen('php://memory', 'r+');
-        fwrite($this->stream, $json);
-        rewind($this->stream); // Go back to the start for reading
-
-        return $this->stream;
-    }
-
-    #[DataProvider('lazyParsingProvider')]
-    #[Test]
-    public function it_lazily_parses_json_response(?string $json, ?string $key, array $expectedArray): void
-    {
-        // Handle null JSON input gracefully (results in empty collection)
-        if ($json === null) {
-            $this->mockResponse->method('resource')->willReturn(null); // Or maybe an empty stream? Test behavior
-            // Let's assume an empty stream for null JSON for robustness
-            $this->stream = $this->createJsonStream('');
-            $this->mockResponse->method('resource')->willReturn($this->stream);
-
-        } else {
-            // Create the stream and configure the mock response
-            $this->stream = $this->createJsonStream($json);
-            $this->mockResponse->method('resource')->willReturn($this->stream);
-        }
-
-        // Get the closure from the mixin
-        $closure = $this->mixin->lazy();
-
-        // Bind the closure to the mock object and execute it
-        // Closure::call() is available from PHP 7.0+
-        $lazyCollection = $closure->call($this->mockResponse, $key);
-
-        // Assert the result is a LazyCollection
-        $this->assertInstanceOf(LazyCollection::class, $lazyCollection);
-
-        // Assert the collected items match the expected array
-        // ->all() triggers the iteration
-        $this->assertEquals($expectedArray, $lazyCollection->all());
-
-        // Optional: Verify rewind was called on the stream (JsonMachine should do this)
-        // Although JsonMachine handles it, verifying the stream state can be useful.
-        // If the stream wasn't empty, check it was read.
-        // This is tricky to assert directly without more complex stream mocking.
-        // Relying on the output ($lazyCollection->all()) is usually sufficient.
-    }
-
     public static function lazyParsingProvider(): array
     {
         $jsonArray = '[{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]';
@@ -194,5 +119,80 @@ final class ResponseMixinTest extends TestCase
                 'expectedArray' => ['code' => 200], // Items yields the single value
             ],
         ];
+    }
+
+    #[Before]
+    public function setUpTest(): void
+    {
+        $this->mixin = new ResponseMixin;
+        // Create a mock Response object
+        $this->mockResponse = $this->createMock(Response::class);
+    }
+
+    #[After]
+    public function tearDownTest(): void
+    {
+        // Ensure the stream is closed after each test
+        if (is_resource($this->stream)) {
+            fclose($this->stream);
+            $this->stream = null;
+        }
+    }
+
+    #[DataProvider('lazyParsingProvider')]
+    #[Test]
+    public function it_lazily_parses_json_response(?string $json, ?string $key, array $expectedArray): void
+    {
+        // Handle null JSON input gracefully (results in empty collection)
+        if ($json === null) {
+            $this->mockResponse->method('resource')->willReturn(null); // Or maybe an empty stream? Test behavior
+            // Let's assume an empty stream for null JSON for robustness
+            $this->stream = $this->createJsonStream('');
+            $this->mockResponse->method('resource')->willReturn($this->stream);
+
+        } else {
+            // Create the stream and configure the mock response
+            $this->stream = $this->createJsonStream($json);
+            $this->mockResponse->method('resource')->willReturn($this->stream);
+        }
+
+        // Get the closure from the mixin
+        $closure = $this->mixin->lazy();
+
+        // Bind the closure to the mock object and execute it
+        // Closure::call() is available from PHP 7.0+
+        $lazyCollection = $closure->call($this->mockResponse, $key);
+
+        // Assert the result is a LazyCollection
+        $this->assertInstanceOf(LazyCollection::class, $lazyCollection);
+
+        // Assert the collected items match the expected array
+        // ->all() triggers the iteration
+        $this->assertEquals($expectedArray, $lazyCollection->all());
+
+        // Optional: Verify rewind was called on the stream (JsonMachine should do this)
+        // Although JsonMachine handles it, verifying the stream state can be useful.
+        // If the stream wasn't empty, check it was read.
+        // This is tricky to assert directly without more complex stream mocking.
+        // Relying on the output ($lazyCollection->all()) is usually sufficient.
+    }
+
+    /**
+     * Helper to create a stream from a JSON string.
+     *
+     * @return resource
+     */
+    private function createJsonStream(string $json)
+    {
+        // Close previous stream if any exists
+        if (is_resource($this->stream)) {
+            fclose($this->stream);
+        }
+
+        $this->stream = fopen('php://memory', 'r+');
+        fwrite($this->stream, $json);
+        rewind($this->stream); // Go back to the start for reading
+
+        return $this->stream;
     }
 }

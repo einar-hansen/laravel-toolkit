@@ -13,7 +13,7 @@ use JsonMachine\Items;
 use JsonMachine\JsonDecoder\ExtJsonDecoder;
 use Throwable;
 
-class ResponseMixin
+final class ResponseMixin
 {
     public function lazy(): Closure
     {

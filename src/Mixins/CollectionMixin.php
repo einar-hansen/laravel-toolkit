@@ -8,7 +8,7 @@ use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-class CollectionMixin
+final class CollectionMixin
 {
     /**
      * Wrap the given value in a list collection if applicable.

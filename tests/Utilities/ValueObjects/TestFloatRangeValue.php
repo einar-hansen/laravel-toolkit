@@ -6,7 +6,7 @@ namespace EinarHansen\Toolkit\Tests\Utilities\ValueObjects;
 
 use EinarHansen\Toolkit\ValueObjects\FloatRangeValue;
 
-class TestFloatRangeValue extends FloatRangeValue
+final class TestFloatRangeValue extends FloatRangeValue
 {
     protected function getMaxValue(): ?float
     {

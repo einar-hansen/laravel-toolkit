@@ -7,8 +7,9 @@ namespace EinarHansen\Toolkit\Tests\Utilities\ValueObjects;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use EinarHansen\Toolkit\ValueObjects\DateRangeValue;
+use Override;
 
-class TestDateRangeValue extends DateRangeValue
+final class TestDateRangeValue extends DateRangeValue
 {
     protected function getMaxDate(): ?CarbonInterface
     {
@@ -20,6 +21,7 @@ class TestDateRangeValue extends DateRangeValue
         return Carbon::parse('2020-01-01');
     }
 
+    #[Override]
     protected function getDateFormat(): string
     {
         return 'Y-m-d';

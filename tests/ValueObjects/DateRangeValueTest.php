@@ -10,7 +10,7 @@ use EinarHansen\Toolkit\ValueObjects\DateRangeValue;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-class DateRangeValueTest extends TestCase
+final class DateRangeValueTest extends TestCase
 {
     public function test_can_create_valid_date_range_value_from_string(): void
     {

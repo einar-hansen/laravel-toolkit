@@ -7,7 +7,7 @@ namespace EinarHansen\Toolkit\Tests\Mixins;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use DateTime;
+use DateTimeImmutable;
 use EinarHansen\Toolkit\Mixins\ArrMixin;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -37,15 +37,6 @@ final class ArrMixinTest extends TestCase
         parent::tearDown();
     }
 
-    #[DataProvider('tryKeysProvider')]
-    #[Test]
-    public function it_can_try_multiple_keys_and_return_first_found(array $array, array $keys, mixed $expected): void
-    {
-        $closure = $this->arrMixin->tryKeys();
-        $result = $closure($array, ...$keys);
-        $this->assertSame($expected, $result);
-    }
-
     public static function tryKeysProvider(): array
     {
         $data = [
@@ -70,15 +61,6 @@ final class ArrMixinTest extends TestCase
             'no keys provided' => [$data, [], null],
             'empty array' => [[], ['name', 'alias'], null],
         ];
-    }
-
-    #[DataProvider('issetProvider')]
-    #[Test]
-    public function it_checks_if_key_is_set(array $array, string $key, bool $expected): void
-    {
-        $closure = $this->arrMixin->isset();
-        $result = $closure($array, $key);
-        $this->assertSame($expected, $result);
     }
 
     public static function issetProvider(): array
@@ -129,15 +111,6 @@ final class ArrMixinTest extends TestCase
             'nested path to top-level array' => [$data, 'nested', true], // 'nested' key itself exists and is not null
             'empty input array' => [[], 'any_key', false],
         ];
-    }
-
-    #[DataProvider('isEmptyProvider')]
-    #[Test]
-    public function it_checks_if_key_is_empty(array $array, string $key, bool $expected): void
-    {
-        $closure = $this->arrMixin->isEmpty();
-        $result = $closure($array, $key);
-        $this->assertSame($expected, $result);
     }
 
     public static function isEmptyProvider(): array
@@ -192,15 +165,6 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
-    #[DataProvider('stringProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_string_with_default(array $array, string $key, string $default, string $expected): void
-    {
-        $closure = $this->arrMixin->string();
-        $result = $closure($array, $key, $default);
-        $this->assertSame($expected, $result);
-    }
-
     public static function stringProvider(): array
     {
         $data = [
@@ -229,15 +193,6 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
-    #[DataProvider('stringOrNullProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_string_or_null(array $array, string $key, ?string $expected): void
-    {
-        $closure = $this->arrMixin->stringOrNull();
-        $result = $closure($array, $key);
-        $this->assertSame($expected, $result);
-    }
-
     public static function stringOrNullProvider(): array
     {
         $data = [
@@ -263,15 +218,6 @@ final class ArrMixinTest extends TestCase
             'missing nested key' => [$data, 'nested.missing', null],
             'empty array' => [[], 'name', null],
         ];
-    }
-
-    #[DataProvider('integerProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_integer_with_default(array $array, string $key, int $default, int $expected): void
-    {
-        $closure = $this->arrMixin->integer();
-        $result = $closure($array, $key, $default);
-        $this->assertSame($expected, $result);
     }
 
     public static function integerProvider(): array
@@ -312,15 +258,6 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
-    #[DataProvider('integerOrNullProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_integer_or_null(array $array, string $key, ?int $expected): void
-    {
-        $closure = $this->arrMixin->integerOrNull();
-        $result = $closure($array, $key);
-        $this->assertSame($expected, $result);
-    }
-
     public static function integerOrNullProvider(): array
     {
         $data = [
@@ -357,15 +294,6 @@ final class ArrMixinTest extends TestCase
             'missing nested key' => [$data, 'nested.missing', null],
             'empty array' => [[], 'age', null],
         ];
-    }
-
-    #[DataProvider('floatProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_float_with_default(array $array, string $key, float $default, float $expected): void
-    {
-        $closure = $this->arrMixin->float();
-        $result = $closure($array, $key, $default);
-        $this->assertEqualsWithDelta($expected, $result, 0.00001); // Use delta for float comparison
     }
 
     public static function floatProvider(): array
@@ -406,20 +334,6 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
-    #[DataProvider('floatOrNullProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_float_or_null(array $array, string $key, ?float $expected): void
-    {
-        $closure = $this->arrMixin->floatOrNull();
-        $result = $closure($array, $key);
-
-        if ($expected === null) {
-            $this->assertNull($result);
-        } else {
-            $this->assertEqualsWithDelta($expected, $result, 0.00001);
-        }
-    }
-
     public static function floatOrNullProvider(): array
     {
         $data = [
@@ -456,15 +370,6 @@ final class ArrMixinTest extends TestCase
             'missing nested key' => [$data, 'nested.missing', null],
             'empty array' => [[], 'price', null],
         ];
-    }
-
-    #[DataProvider('booleanProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_boolean_with_default(array $array, string $key, bool $default, bool $expected): void
-    {
-        $closure = $this->arrMixin->boolean();
-        $result = $closure($array, $key, $default);
-        $this->assertSame($expected, $result);
     }
 
     public static function booleanProvider(): array
@@ -531,15 +436,6 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
-    #[DataProvider('booleanOrNullProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_boolean_or_null(array $array, string $key, ?bool $expected): void
-    {
-        $closure = $this->arrMixin->booleanOrNull();
-        $result = $closure($array, $key);
-        $this->assertSame($expected, $result);
-    }
-
     public static function booleanOrNullProvider(): array
     {
         // Reuse most cases from booleanProvider but change expectation to null for defaults/invalid
@@ -563,18 +459,6 @@ final class ArrMixinTest extends TestCase
         return $orNullCases;
     }
 
-    #[DataProvider('dateProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_date_with_default(array $array, string $key, mixed $default, string $expectedDateString): void
-    {
-        $closure = $this->arrMixin->date();
-        $result = $closure($array, $key, $default);
-
-        $this->assertInstanceOf(CarbonImmutable::class, $result);
-        // Compare date part only, as time should be zeroed
-        $this->assertSame($expectedDateString, $result->toDateString());
-    }
-
     public static function dateProvider(): array
     {
         $nowDateString = CarbonImmutable::create(2024, 5, 15, 12, 30, 45, 'UTC')->toDateString();
@@ -582,7 +466,7 @@ final class ArrMixinTest extends TestCase
         $defaultDateTime = Carbon::parse('2023-01-01 15:00:00'); // Time should be ignored
         $validDateString = '2024-02-20';
         $validDateTimeString = '2024-03-10 10:20:30'; // Time should be ignored
-        $validDateTimeObj = new DateTime($validDateTimeString);
+        $validDateTimeObj = new DateTimeImmutable($validDateTimeString);
         $validCarbonObj = CarbonImmutable::parse($validDateTimeString);
 
         $data = [
@@ -625,26 +509,11 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
-    #[DataProvider('dateOrNullProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_date_or_null(array $array, string $key, ?string $expectedDateString): void
-    {
-        $closure = $this->arrMixin->dateOrNull();
-        $result = $closure($array, $key);
-
-        if ($expectedDateString === null) {
-            $this->assertNull($result);
-        } else {
-            $this->assertInstanceOf(CarbonImmutable::class, $result);
-            $this->assertSame($expectedDateString, $result->toDateString());
-        }
-    }
-
     public static function dateOrNullProvider(): array
     {
         $validDateString = '2024-02-20';
         $validDateTimeString = '2024-03-10 10:20:30'; // Time should be ignored
-        $validDateTimeObj = new DateTime($validDateTimeString);
+        $validDateTimeObj = new DateTimeImmutable($validDateTimeString);
         $validCarbonObj = CarbonImmutable::parse($validDateTimeString);
 
         $data = [
@@ -671,18 +540,6 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
-    #[DataProvider('dateTimeProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_datetime_with_default(array $array, string $key, mixed $default, CarbonInterface $expectedDateTime): void
-    {
-        $closure = $this->arrMixin->dateTime();
-        $result = $closure($array, $key, $default);
-
-        $this->assertInstanceOf(CarbonInterface::class, $result);
-        // Compare using assertEquals for Carbon instances (checks value)
-        $this->assertEquals($expectedDateTime, $result);
-    }
-
     public static function dateTimeProvider(): array
     {
         $now = CarbonImmutable::create(2024, 5, 15, 12, 30, 45, 'UTC'); // Use the mocked 'now'
@@ -690,7 +547,7 @@ final class ArrMixinTest extends TestCase
         $defaultDateTime = CarbonImmutable::parse($defaultDateTimeString);
         $validDateTimeString = '2024-03-10 10:20:30';
         $validDateTime = CarbonImmutable::parse($validDateTimeString);
-        $validDateTimeObj = new DateTime($validDateTimeString); // Native DateTime
+        $validDateTimeObj = new DateTimeImmutable($validDateTimeString); // Native DateTime
         $validCarbonObj = CarbonImmutable::parse($validDateTimeString); // CarbonImmutable
 
         $data = [
@@ -732,26 +589,11 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
-    #[DataProvider('dateTimeOrNullProvider')]
-    #[Test]
-    public function it_can_get_a_value_as_datetime_or_null(array $array, string $key, ?CarbonInterface $expectedDateTime): void
-    {
-        $closure = $this->arrMixin->dateTimeOrNull();
-        $result = $closure($array, $key);
-
-        if (! $expectedDateTime instanceof CarbonInterface) {
-            $this->assertNull($result);
-        } else {
-            $this->assertInstanceOf(CarbonInterface::class, $result);
-            $this->assertEquals($expectedDateTime, $result);
-        }
-    }
-
     public static function dateTimeOrNullProvider(): array
     {
         $validDateTimeString = '2024-03-10 10:20:30';
         $validDateTime = CarbonImmutable::parse($validDateTimeString);
-        $validDateTimeObj = new DateTime($validDateTimeString);
+        $validDateTimeObj = new DateTimeImmutable($validDateTimeString);
         $validCarbonObj = CarbonImmutable::parse($validDateTimeString);
 
         $data = [
@@ -775,5 +617,163 @@ final class ArrMixinTest extends TestCase
             'missing nested key' => [$data, 'nested.missing', null],
             'empty array' => [[], 'datetime', null],
         ];
+    }
+
+    #[DataProvider('tryKeysProvider')]
+    #[Test]
+    public function it_can_try_multiple_keys_and_return_first_found(array $array, array $keys, mixed $expected): void
+    {
+        $closure = $this->arrMixin->tryKeys();
+        $result = $closure($array, ...$keys);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('issetProvider')]
+    #[Test]
+    public function it_checks_if_key_is_set(array $array, string $key, bool $expected): void
+    {
+        $closure = $this->arrMixin->isset();
+        $result = $closure($array, $key);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('isEmptyProvider')]
+    #[Test]
+    public function it_checks_if_key_is_empty(array $array, string $key, bool $expected): void
+    {
+        $closure = $this->arrMixin->isEmpty();
+        $result = $closure($array, $key);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('stringProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_string_with_default(array $array, string $key, string $default, string $expected): void
+    {
+        $closure = $this->arrMixin->string();
+        $result = $closure($array, $key, $default);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('stringOrNullProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_string_or_null(array $array, string $key, ?string $expected): void
+    {
+        $closure = $this->arrMixin->stringOrNull();
+        $result = $closure($array, $key);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('integerProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_integer_with_default(array $array, string $key, int $default, int $expected): void
+    {
+        $closure = $this->arrMixin->integer();
+        $result = $closure($array, $key, $default);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('integerOrNullProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_integer_or_null(array $array, string $key, ?int $expected): void
+    {
+        $closure = $this->arrMixin->integerOrNull();
+        $result = $closure($array, $key);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('floatProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_float_with_default(array $array, string $key, float $default, float $expected): void
+    {
+        $closure = $this->arrMixin->float();
+        $result = $closure($array, $key, $default);
+        $this->assertEqualsWithDelta($expected, $result, 0.00001); // Use delta for float comparison
+    }
+
+    #[DataProvider('floatOrNullProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_float_or_null(array $array, string $key, ?float $expected): void
+    {
+        $closure = $this->arrMixin->floatOrNull();
+        $result = $closure($array, $key);
+
+        if ($expected === null) {
+            $this->assertNull($result);
+        } else {
+            $this->assertEqualsWithDelta($expected, $result, 0.00001);
+        }
+    }
+
+    #[DataProvider('booleanProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_boolean_with_default(array $array, string $key, bool $default, bool $expected): void
+    {
+        $closure = $this->arrMixin->boolean();
+        $result = $closure($array, $key, $default);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('booleanOrNullProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_boolean_or_null(array $array, string $key, ?bool $expected): void
+    {
+        $closure = $this->arrMixin->booleanOrNull();
+        $result = $closure($array, $key);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('dateProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_date_with_default(array $array, string $key, mixed $default, string $expectedDateString): void
+    {
+        $closure = $this->arrMixin->date();
+        $result = $closure($array, $key, $default);
+
+        $this->assertInstanceOf(CarbonImmutable::class, $result);
+        // Compare date part only, as time should be zeroed
+        $this->assertSame($expectedDateString, $result->toDateString());
+    }
+
+    #[DataProvider('dateOrNullProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_date_or_null(array $array, string $key, ?string $expectedDateString): void
+    {
+        $closure = $this->arrMixin->dateOrNull();
+        $result = $closure($array, $key);
+
+        if ($expectedDateString === null) {
+            $this->assertNull($result);
+        } else {
+            $this->assertInstanceOf(CarbonImmutable::class, $result);
+            $this->assertSame($expectedDateString, $result->toDateString());
+        }
+    }
+
+    #[DataProvider('dateTimeProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_datetime_with_default(array $array, string $key, mixed $default, CarbonInterface $expectedDateTime): void
+    {
+        $closure = $this->arrMixin->dateTime();
+        $result = $closure($array, $key, $default);
+
+        $this->assertInstanceOf(CarbonInterface::class, $result);
+        // Compare using assertEquals for Carbon instances (checks value)
+        $this->assertEquals($expectedDateTime, $result);
+    }
+
+    #[DataProvider('dateTimeOrNullProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_datetime_or_null(array $array, string $key, ?CarbonInterface $expectedDateTime): void
+    {
+        $closure = $this->arrMixin->dateTimeOrNull();
+        $result = $closure($array, $key);
+
+        if (! $expectedDateTime instanceof CarbonInterface) {
+            $this->assertNull($result);
+        } else {
+            $this->assertInstanceOf(CarbonInterface::class, $result);
+            $this->assertEquals($expectedDateTime, $result);
+        }
     }
 }
