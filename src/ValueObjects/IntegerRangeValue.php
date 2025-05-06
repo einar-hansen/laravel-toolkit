@@ -16,32 +16,14 @@ abstract class IntegerRangeValue implements Stringable
         $this->validate();
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->value;
+    }
+
     abstract protected function getMaxValue(): ?int;
 
     abstract protected function getMinValue(): ?int;
-
-    protected function validate(): void
-    {
-        if ($this->getMaxValue() !== null && $this->value > $this->getMaxValue()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Integer value exceeds maximum of %d for %s',
-                    $this->getMaxValue(),
-                    static::class
-                )
-            );
-        }
-
-        if ($this->getMinValue() !== null && $this->value < $this->getMinValue()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Integer value is less than minimum of %d for %s',
-                    $this->getMinValue(),
-                    static::class
-                )
-            );
-        }
-    }
 
     /**
      * Attempts to create a new instance from the given value.
@@ -122,8 +104,26 @@ abstract class IntegerRangeValue implements Stringable
         return $this->__toString();
     }
 
-    public function __toString(): string
+    protected function validate(): void
     {
-        return (string) $this->value;
+        if ($this->getMaxValue() !== null && $this->value > $this->getMaxValue()) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Integer value exceeds maximum of %d for %s',
+                    $this->getMaxValue(),
+                    static::class
+                )
+            );
+        }
+
+        if ($this->getMinValue() !== null && $this->value < $this->getMinValue()) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Integer value is less than minimum of %d for %s',
+                    $this->getMinValue(),
+                    static::class
+                )
+            );
+        }
     }
 }

@@ -23,21 +23,6 @@ final class CollectionMixinTest extends TestCase
         $this->mixin = new CollectionMixin;
     }
 
-    #[DataProvider('wrapListProvider')]
-    #[Test]
-    public function it_wraps_values_into_list_collection(mixed $input, array $expectedArray): void
-    {
-        $closure = $this->mixin->wrapList();
-
-        $result = $closure($input);
-
-        // Ensure the output is always a Collection instance
-        $this->assertInstanceOf(Collection::class, $result);
-
-        // Compare the underlying array structure
-        $this->assertEquals($expectedArray, $result->all());
-    }
-
     public static function wrapListProvider(): array
     {
         $object = new stdClass;
@@ -105,5 +90,20 @@ final class CollectionMixinTest extends TestCase
                 'expectedArray' => [],
             ],
         ];
+    }
+
+    #[DataProvider('wrapListProvider')]
+    #[Test]
+    public function it_wraps_values_into_list_collection(mixed $input, array $expectedArray): void
+    {
+        $closure = $this->mixin->wrapList();
+
+        $result = $closure($input);
+
+        // Ensure the output is always a Collection instance
+        $this->assertInstanceOf(Collection::class, $result);
+
+        // Compare the underlying array structure
+        $this->assertEquals($expectedArray, $result->all());
     }
 }

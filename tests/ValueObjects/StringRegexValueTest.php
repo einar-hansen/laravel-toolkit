@@ -9,7 +9,7 @@ use EinarHansen\Toolkit\ValueObjects\StringRegexValue;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-class StringRegexValueTest extends TestCase
+final class StringRegexValueTest extends TestCase
 {
     public function test_can_create_valid_string_regex_value(): void
     {

@@ -7,7 +7,7 @@ namespace EinarHansen\Toolkit\Tests\Utilities\ValueObjects;
 use EinarHansen\Toolkit\ValueObjects\StringLengthValue;
 use Override;
 
-class TestStringLengthValue extends StringLengthValue
+final class TestStringLengthValue extends StringLengthValue
 {
     #[Override]
     protected function getMaxLength(): ?int

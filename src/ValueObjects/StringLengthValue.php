@@ -17,32 +17,15 @@ abstract class StringLengthValue implements Stringable
         $this->validate();
     }
 
+    #[Override]
+    public function __toString(): string
+    {
+        return $this->value;
+    }
+
     abstract protected function getMaxLength(): ?int;
 
     abstract protected function getMinLength(): ?int;
-
-    protected function validate(): void
-    {
-        if ($this->getMaxLength() !== null && mb_strlen($this->value) > $this->getMaxLength()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'String length exceeds maximum of %d characters for %s',
-                    $this->getMaxLength(),
-                    static::class
-                )
-            );
-        }
-
-        if ($this->getMinLength() !== null && mb_strlen($this->value) < $this->getMinLength()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'String length is less than minimum of %d characters for %s',
-                    $this->getMinLength(),
-                    static::class
-                )
-            );
-        }
-    }
 
     /**
      * Attempts to create a new instance from the given value.
@@ -109,9 +92,26 @@ abstract class StringLengthValue implements Stringable
         return $this->value;
     }
 
-    #[Override]
-    public function __toString(): string
+    protected function validate(): void
     {
-        return $this->value;
+        if ($this->getMaxLength() !== null && mb_strlen($this->value) > $this->getMaxLength()) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'String length exceeds maximum of %d characters for %s',
+                    $this->getMaxLength(),
+                    static::class
+                )
+            );
+        }
+
+        if ($this->getMinLength() !== null && mb_strlen($this->value) < $this->getMinLength()) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'String length is less than minimum of %d characters for %s',
+                    $this->getMinLength(),
+                    static::class
+                )
+            );
+        }
     }
 }

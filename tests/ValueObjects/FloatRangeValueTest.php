@@ -9,7 +9,7 @@ use EinarHansen\Toolkit\ValueObjects\FloatRangeValue;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-class FloatRangeValueTest extends TestCase
+final class FloatRangeValueTest extends TestCase
 {
     public function test_can_create_valid_float_range_value(): void
     {

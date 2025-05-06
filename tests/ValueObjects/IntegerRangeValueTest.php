@@ -9,7 +9,7 @@ use EinarHansen\Toolkit\ValueObjects\IntegerRangeValue;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-class IntegerRangeValueTest extends TestCase
+final class IntegerRangeValueTest extends TestCase
 {
     public function test_can_create_valid_integer_range_value(): void
     {

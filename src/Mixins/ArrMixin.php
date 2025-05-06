@@ -11,7 +11,7 @@ use DateTimeInterface;
 use Exception;
 use Illuminate\Support\Arr;
 
-class ArrMixin
+final class ArrMixin
 {
     public function tryKeys(): Closure
     {
@@ -155,7 +155,7 @@ class ArrMixin
             }
 
             if (is_string($value)) {
-                $value = strtolower($value);
+                $value = mb_strtolower($value);
                 $trueValues = ['true', '1', 'yes', 'on'];
                 $falseValues = ['false', '0', 'no', 'off'];
 
@@ -190,7 +190,7 @@ class ArrMixin
             }
 
             if (is_string($value)) {
-                $value = strtolower($value);
+                $value = mb_strtolower($value);
                 $trueValues = ['true', '1', 'yes', 'on'];
                 $falseValues = ['false', '0', 'no', 'off'];
 
