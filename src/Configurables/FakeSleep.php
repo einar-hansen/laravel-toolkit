@@ -15,7 +15,10 @@ final readonly class FakeSleep implements Configurable
      */
     public function enabled(): bool
     {
-        return Config::boolean('toolkit.tests.enable_fake_sleep', true);
+        $enabled = Config::boolean('toolkit.tests.enable_fake_sleep', true);
+        $testing = app()->runningUnitTests();
+
+        return $enabled && $testing;
     }
 
     /**

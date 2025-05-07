@@ -15,7 +15,10 @@ final readonly class PreventStrayRequests implements Configurable
      */
     public function enabled(): bool
     {
-        return Config::boolean('toolkit.tests.prevent_stray_requests', true);
+        $enabled = Config::boolean('toolkit.tests.prevent_stray_requests', true);
+        $testing = app()->runningUnitTests();
+
+        return $enabled && $testing;
     }
 
     /**
