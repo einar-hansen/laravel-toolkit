@@ -57,6 +57,9 @@ final class ToolkitServiceProvider extends BaseServiceProvider
             ]);
 
             $this->publishes([
+                __DIR__.'/../config/toolkit.php' => $this->app->basePath('config/toolkit.php'),
+            ], 'toolkit-config');
+            $this->publishes([
                 __DIR__.'/../stubs' => $this->app->basePath('stubs'),
             ], 'toolkit-stubs');
         }
