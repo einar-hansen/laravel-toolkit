@@ -3,12 +3,16 @@
 declare(strict_types=1);
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Laravel Toolkit configuration
     |--------------------------------------------------------------------------
     |
+    | Here you can select which mixins and configs you want to enable.
+    |
     */
+
     'eloquent' => [
         'strict_mode' => (bool) env('ELOQUENT_STRICT_MODE', true),
         'eager_load_relationships' => (bool) env('ELOQUENT_EAGER_LOAD_RELATIONSHIPS', false),
