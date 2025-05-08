@@ -22,6 +22,8 @@ use Stringable;
  * convertible to arrays, JSON, and HTTP responses.
  *
  * @template T of array<string, mixed>
+ *
+ * @implements Arrayable<string, mixed>
  */
 abstract class Jsonable implements Arrayable, JsonableContract, JsonSerializable, Responsable, Stringable
 {
