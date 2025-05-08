@@ -18,3 +18,4 @@ parameters:
 
     ignoreErrors:
     - '#Unsafe usage of new static\(\)\.#'
+    - '#is used zero times and is not analysed#'
