@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\ValueObjects;
 
+use ArrayAccess;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Exception;
@@ -35,8 +36,12 @@ abstract class DateRangeValue implements Stringable
      * Attempts to create a new instance from the given value.
      * Returns null if the value is invalid.
      */
-    public static function tryFrom(string|CarbonInterface $value): ?static
+    public static function tryFrom(string|CarbonInterface|self $value): ?static
     {
+        if ($value instanceof self) {
+            $value = $value->string();
+        }
+
         try {
             return new static($value);
         } catch (InvalidArgumentException) {
@@ -50,8 +55,12 @@ abstract class DateRangeValue implements Stringable
      *
      * @throws InvalidArgumentException If the value is invalid
      */
-    public static function from(string|CarbonInterface $value): static
+    public static function from(string|CarbonInterface|self $value): static
     {
+        if ($value instanceof self) {
+            $value = $value->string();
+        }
+
         return new static($value);
     }
 
@@ -59,9 +68,9 @@ abstract class DateRangeValue implements Stringable
      * Attempts to create a new instance from the given array and key.
      * Returns null if the value is invalid or not present.
      *
-     * @param  array<string, mixed>  $array
+     * @param  ArrayAccess<string, mixed>|array<string, mixed>  $array
      */
-    public static function tryFromArray(array $array, string $key): ?static
+    public static function tryFromArray(ArrayAccess|array $array, string|int|null $key): ?static
     {
         $value = Arr::get($array, $key);
 
@@ -77,11 +86,11 @@ abstract class DateRangeValue implements Stringable
      * Uses default if the value is invalid or not present.
      * Throws an exception if the resulting value is invalid.
      *
-     * @param  array<string, mixed>  $array
+     * @param  ArrayAccess<string, mixed>|array<string, mixed>  $array
      *
      * @throws InvalidArgumentException If the value is invalid
      */
-    public static function fromArray(array $array, string $key, string|CarbonInterface|null $default = null): static
+    public static function fromArray(ArrayAccess|array $array, string|int|null $key, string|CarbonInterface|null|self $default = null): static
     {
         $value = Arr::get($array, $key, $default);
 
@@ -111,10 +120,14 @@ abstract class DateRangeValue implements Stringable
         return 'Y-m-d';
     }
 
-    protected function parseDate(string|CarbonInterface $value): CarbonInterface
+    protected function parseDate(string|CarbonInterface|self $value): CarbonInterface
     {
         if ($value instanceof CarbonInterface) {
             return $value;
+        }
+
+        if ($value instanceof self) {
+            return $value->value();
         }
 
         try {

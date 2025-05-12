@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\Mixins;
 
+use ArrayAccess;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Closure;
@@ -38,7 +39,7 @@ final class ArrMixin
      */
     public function isset()
     {
-        return function (array $array, string $key): bool {
+        return function (ArrayAccess|array $array, string|int|null $key): bool {
             if (! Arr::has($array, $key)) {
                 return false;
             }
@@ -60,12 +61,12 @@ final class ArrMixin
      */
     public function isEmpty() // Renamed from the commented version for clarity
     {
-        return fn (array $array, string $key): bool => empty(Arr::get($array, $key));
+        return fn (ArrayAccess|array $array, string|int|null $key): bool => empty(Arr::get($array, $key));
     }
 
     public function string(): Closure
     {
-        return function (array $array, string $key, string $default = ''): string {
+        return function (ArrayAccess|array $array, string|int|null $key, string $default = ''): string {
             $value = Arr::get($array, $key, $default);
 
             if ($value === null) {
@@ -78,7 +79,7 @@ final class ArrMixin
 
     public function stringOrNull(): Closure
     {
-        return function (array $array, string $key): ?string {
+        return function (ArrayAccess|array $array, string|int|null $key): ?string {
             $value = Arr::get($array, $key);
 
             return $value === null ? null : (string) $value;
@@ -87,7 +88,7 @@ final class ArrMixin
 
     public function integer(): Closure
     {
-        return function (array $array, string $key, int $default = 0): int {
+        return function (ArrayAccess|array $array, string|int|null $key, int $default = 0): int {
             $value = Arr::get($array, $key, $default);
             if ($value === null) {
                 return $default;
@@ -103,7 +104,7 @@ final class ArrMixin
 
     public function integerOrNull(): Closure
     {
-        return function (array $array, string $key): ?int {
+        return function (ArrayAccess|array $array, string|int|null $key): ?int {
             $value = Arr::get($array, $key);
             if (is_bool($value)) {
                 return $value ? 1 : 0;
@@ -115,7 +116,7 @@ final class ArrMixin
 
     public function float(): Closure
     {
-        return function (array $array, string $key, float $default = 0.0): float {
+        return function (ArrayAccess|array $array, string|int|null $key, float $default = 0.0): float {
             $value = Arr::get($array, $key, $default);
             if ($value === null) {
                 return $default;
@@ -131,7 +132,7 @@ final class ArrMixin
 
     public function floatOrNull(): Closure
     {
-        return function (array $array, string $key): ?float {
+        return function (ArrayAccess|array $array, string|int|null $key): ?float {
             $value = Arr::get($array, $key);
             if (is_bool($value)) {
                 return $value ? 1 : 0;
@@ -143,7 +144,7 @@ final class ArrMixin
 
     public function boolean(): Closure
     {
-        return function (array $array, string $key, bool $default = false): bool {
+        return function (ArrayAccess|array $array, string|int|null $key, bool $default = false): bool {
             $value = Arr::get($array, $key, $default);
 
             if ($value === null) {
@@ -178,7 +179,7 @@ final class ArrMixin
 
     public function booleanOrNull(): Closure
     {
-        return function (array $array, string $key): ?bool {
+        return function (ArrayAccess|array $array, string|int|null $key): ?bool {
             $value = Arr::get($array, $key);
 
             if ($value === null) {
@@ -213,7 +214,7 @@ final class ArrMixin
 
     public function date(): Closure
     {
-        return function (array $array, string $key, $default = null): CarbonImmutable {
+        return function (ArrayAccess|array $array, string|int|null $key, $default = null): CarbonImmutable {
             $value = Arr::get($array, $key);
 
             if ($value === null) {
@@ -250,7 +251,7 @@ final class ArrMixin
 
     public function dateOrNull(): Closure
     {
-        return function (array $array, string $key): ?CarbonImmutable {
+        return function (ArrayAccess|array $array, string|int|null $key): ?CarbonImmutable {
             $value = Arr::get($array, $key);
 
             if ($value === null) {
@@ -271,7 +272,7 @@ final class ArrMixin
 
     public function dateTime(): Closure
     {
-        return function (array $array, string $key, $default = null): CarbonInterface {
+        return function (ArrayAccess|array $array, string|int|null $key, $default = null): CarbonInterface {
             $value = Arr::get($array, $key);
 
             if ($value === null) {
@@ -309,7 +310,7 @@ final class ArrMixin
 
     public function dateTimeOrNull(): Closure
     {
-        return function (array $array, string $key): ?CarbonInterface {
+        return function (ArrayAccess|array $array, string|int|null $key): ?CarbonInterface {
             $value = Arr::get($array, $key);
 
             if ($value === null) {
