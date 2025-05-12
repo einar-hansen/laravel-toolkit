@@ -11,6 +11,7 @@ use Closure;
 use DateTimeInterface;
 use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Stringable;
 
 final class ArrMixin
 {
@@ -83,6 +84,28 @@ final class ArrMixin
             $value = Arr::get($array, $key);
 
             return $value === null ? null : (string) $value;
+        };
+    }
+
+    public function stringable(): Closure
+    {
+        return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = ''): Stringable {
+            $value = Arr::get($array, $key, $default);
+
+            if ($value === null) {
+                return $default;
+            }
+
+            return new Stringable(is_string($value) ? $value : (string) $value);
+        };
+    }
+
+    public function stringableOrNull(): Closure
+    {
+        return function (ArrayAccess|array $array, string|int|null $key): ?Stringable {
+            $value = Arr::get($array, $key);
+
+            return $value === null ? null : new Stringable((string) $value);
         };
     }
 
