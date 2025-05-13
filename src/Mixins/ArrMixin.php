@@ -380,4 +380,150 @@ final class ArrMixin
             }
         };
     }
+
+    public function toString(): Closure
+    {
+        return $this->string();
+    }
+
+    public function toStringOrNull(): Closure
+    {
+        return $this->stringOrNull();
+    }
+
+    public function toStringable(): Closure
+    {
+        return $this->stringable();
+    }
+
+    public function toStringableOrNull(): Closure
+    {
+        return $this->stringableOrNull();
+    }
+
+    public function toInteger(): Closure
+    {
+        return $this->integer();
+    }
+
+    public function toIntegerOrNull(): Closure
+    {
+        return $this->integerOrNull();
+    }
+
+    public function toFloat(): Closure
+    {
+        return $this->float();
+    }
+
+    public function toFloatOrNull(): Closure
+    {
+        return $this->floatOrNull();
+    }
+
+    public function toBoolean(): Closure
+    {
+        return $this->boolean();
+    }
+
+    public function toBooleanOrNull(): Closure
+    {
+        return $this->booleanOrNull();
+    }
+
+    public function toDate(): Closure
+    {
+        return $this->date();
+    }
+
+    public function toDateOrNull(): Closure
+    {
+        return $this->dateOrNull();
+    }
+
+    public function toDateTime(): Closure
+    {
+        return $this->dateTime();
+    }
+
+    public function toDateTimeOrNull(): Closure
+    {
+        return $this->dateTimeOrNull();
+    }
+
+    /**
+     * Determines if a variable can be cast to a string.
+     *
+     * @param  mixed  $variable  The variable to check
+     * @return bool True if the variable can be cast to a string, false otherwise
+     */
+    private static function canBeCastToString(mixed $variable): bool
+    {
+        // Check for native PHP 8 Stringable interface
+        if ($variable instanceof StringableContract) {
+            return true;
+        }
+
+        // Check for Laravel's Jsonable interface
+        if ($variable instanceof Jsonable) {
+            return true;
+        }
+
+        // Check for PHP's JsonSerializable interface
+        if ($variable instanceof JsonSerializable) {
+            // Note: This doesn't guarantee a string result, as jsonSerialize can return any type
+            // You might want to add additional checks here
+            return true;
+        }
+
+        // Scalar types (excludes null)
+        if (is_scalar($variable)) {
+            return true;
+        }
+
+        // Resources can be converted
+        if (is_resource($variable)) {
+            return true;
+        }
+
+        // Resources can be converted
+        if (is_array($variable)) {
+            return true;
+        }
+
+        // Arrays and null cannot be converted to strings directly
+        return false;
+    }
+
+    /**
+     * Determines if a variable can be cast to a string.
+     *
+     * @param  mixed  $variable  The variable to check
+     * @return bool True if the variable should be cast to a JSON string, false otherwise
+     */
+    private static function shouldCastToJson(mixed $variable): bool
+    {
+        // Check for native PHP 8 Stringable interface
+        if ($variable instanceof StringableContract) {
+            return false;
+        }
+
+        // Check for Laravel's Jsonable interface
+        if ($variable instanceof Jsonable) {
+            return true;
+        }
+
+        // Check for PHP's JsonSerializable interface
+        if ($variable instanceof JsonSerializable) {
+            return true;
+        }
+
+        // Resources can be converted
+        if (is_array($variable)) {
+            return true;
+        }
+
+        // Arrays and null cannot be converted to strings directly
+        return false;
+    }
 }

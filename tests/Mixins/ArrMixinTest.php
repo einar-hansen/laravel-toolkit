@@ -824,4 +824,133 @@ final class ArrMixinTest extends TestCase
             $this->assertEquals($expectedDateTime, $result);
         }
     }
+
+    #[Test]
+    public function it_can_use_to_string_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toString();
+        $this->assertSame('test', $method(['key' => 'test'], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_string_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toStringOrNull();
+        $this->assertSame('test', $method(['key' => 'test'], 'key'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_stringable_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toStringable();
+        $result = $method(['key' => 'test'], 'key');
+        $this->assertInstanceOf(Stringable::class, $result);
+        $this->assertSame('test', (string) $result);
+    }
+
+    #[Test]
+    public function it_can_use_to_stringable_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toStringableOrNull();
+        $result = $method(['key' => 'test'], 'key');
+        $this->assertInstanceOf(Stringable::class, $result);
+        $this->assertSame('test', (string) $result);
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_integer_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toInteger();
+        $this->assertSame(123, $method(['key' => '123'], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_integer_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toIntegerOrNull();
+        $this->assertSame(123, $method(['key' => '123'], 'key'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_float_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toFloat();
+        $this->assertSame(123.45, $method(['key' => '123.45'], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_float_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toFloatOrNull();
+        $this->assertSame(123.45, $method(['key' => '123.45'], 'key'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_boolean_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toBoolean();
+        $this->assertTrue($method(['key' => 'true'], 'key'));
+        $this->assertFalse($method(['key' => 'false'], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_boolean_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toBooleanOrNull();
+        $this->assertTrue($method(['key' => 'true'], 'key'));
+        $this->assertFalse($method(['key' => 'false'], 'key'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_date_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toDate();
+        $result = $method(['key' => '2024-03-14'], 'key');
+        $this->assertSame('2024-03-14', $result->format('Y-m-d'));
+    }
+
+    #[Test]
+    public function it_can_use_to_date_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toDateOrNull();
+        $result = $method(['key' => '2024-03-14'], 'key');
+        $this->assertSame('2024-03-14', $result->format('Y-m-d'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_date_time_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toDateTime();
+        $result = $method(['key' => '2024-03-14 15:30:00'], 'key');
+        $this->assertSame('2024-03-14 15:30:00', $result->format('Y-m-d H:i:s'));
+    }
+
+    #[Test]
+    public function it_can_use_to_date_time_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toDateTimeOrNull();
+        $result = $method(['key' => '2024-03-14 15:30:00'], 'key');
+        $this->assertSame('2024-03-14 15:30:00', $result->format('Y-m-d H:i:s'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
 }
