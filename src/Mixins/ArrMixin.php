@@ -10,8 +10,10 @@ use Carbon\CarbonInterface;
 use Closure;
 use DateTimeInterface;
 use Exception;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Enumerable;
 use Illuminate\Support\Stringable;
 use JsonSerializable;
 use Stringable as StringableContract;
@@ -73,8 +75,8 @@ final class ArrMixin
         return function (ArrayAccess|array $array, string|int|null $key, string $default = ''): string {
             $value = Arr::get($array, $key, $default);
 
-            if (static::canBeCastToString($value)) {
-                if (static::shouldCastToJson($value)) {
+            if ($this->canBeCastToString($value)) {
+                if ($this->shouldCastToJson($value)) {
                     $value = json_encode($value);
                 }
 
@@ -91,8 +93,8 @@ final class ArrMixin
         return function (ArrayAccess|array $array, string|int|null $key): ?string {
             $value = Arr::get($array, $key);
 
-            if (static::canBeCastToString($value)) {
-                if (static::shouldCastToJson($value)) {
+            if ($this->canBeCastToString($value)) {
+                if ($this->shouldCastToJson($value)) {
                     $value = json_encode($value);
                 }
 
@@ -108,8 +110,8 @@ final class ArrMixin
         return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = ''): Stringable {
             $value = Arr::get($array, $key, $default);
 
-            if (static::canBeCastToString($value)) {
-                if (static::shouldCastToJson($value)) {
+            if ($this->canBeCastToString($value)) {
+                if ($this->shouldCastToJson($value)) {
                     $value = json_encode($value);
                 }
 
@@ -126,8 +128,8 @@ final class ArrMixin
         return function (ArrayAccess|array $array, string|int|null $key): ?Stringable {
             $value = Arr::get($array, $key);
 
-            if (static::canBeCastToString($value)) {
-                if (static::shouldCastToJson($value)) {
+            if ($this->canBeCastToString($value)) {
+                if ($this->shouldCastToJson($value)) {
                     $value = json_encode($value);
                 }
 
@@ -135,6 +137,96 @@ final class ArrMixin
             }
 
             return null;
+        };
+    }
+
+    public function array(): Closure
+    {
+        return static function (ArrayAccess|array $source, string|int|null $key, array $default = []): array {
+            $value = Arr::get($source, $key);
+
+            if ($value === null) {
+                return $default;
+            }
+
+            if (is_array($value)) {
+                return $value;
+            }
+
+            if ($value instanceof Arrayable) {
+                return $value->toArray();
+            }
+
+            if ($value instanceof Enumerable) {
+                return $value->all();
+            }
+
+            // Check for Laravel's Jsonable interface
+            if ($value instanceof Jsonable) {
+                $value = $value->toJson();
+            }
+
+            // Check for PHP's JsonSerializable interface
+            if ($value instanceof JsonSerializable) {
+                $value = json_encode($value->jsonSerialize());
+            }
+
+            // Check for native PHP 8 Stringable interface
+            if ($value instanceof StringableContract) {
+                $value = (string) $value;
+            }
+
+            if (is_string($value) && json_validate($value)) {
+                return json_decode($value, true);
+            }
+
+            // For skalarer og andre objekttyper, bruk (array) type-casting.
+            return (array) $value;
+        };
+    }
+
+    public function arrayOrNull(): Closure
+    {
+        return static function (ArrayAccess|array $source, string|int|null $key): ?array {
+            $value = Arr::get($source, $key);
+
+            if ($value === null) {
+                return null;
+            }
+
+            if (is_array($value)) {
+                return $value;
+            }
+
+            if ($value instanceof Arrayable) {
+                return $value->toArray();
+            }
+
+            if ($value instanceof Enumerable) {
+                return $value->all();
+            }
+
+            // Check for Laravel's Jsonable interface
+            if ($value instanceof Jsonable) {
+                $value = $value->toJson();
+            }
+
+            // Check for PHP's JsonSerializable interface
+            if ($value instanceof JsonSerializable) {
+                $value = json_encode($value->jsonSerialize());
+            }
+
+            // Check for native PHP 8 Stringable interface
+            if ($value instanceof StringableContract) {
+                $value = (string) $value;
+            }
+
+            if (is_string($value) && json_validate($value)) {
+                return json_decode($value, true);
+            }
+
+            // For skalarer og andre objekttyper, bruk (array) type-casting.
+            return (array) $value;
         };
     }
 
@@ -451,13 +543,23 @@ final class ArrMixin
         return $this->dateTimeOrNull();
     }
 
+    public function toArray(): Closure
+    {
+        return $this->array();
+    }
+
+    public function toArrayOrNull(): Closure
+    {
+        return $this->arrayOrNull();
+    }
+
     /**
      * Determines if a variable can be cast to a string.
      *
      * @param  mixed  $variable  The variable to check
      * @return bool True if the variable can be cast to a string, false otherwise
      */
-    private static function canBeCastToString(mixed $variable): bool
+    private function canBeCastToString(mixed $variable): bool
     {
         // Check for native PHP 8 Stringable interface
         if ($variable instanceof StringableContract) {
@@ -487,12 +589,8 @@ final class ArrMixin
         }
 
         // Resources can be converted
-        if (is_array($variable)) {
-            return true;
-        }
-
         // Arrays and null cannot be converted to strings directly
-        return false;
+        return is_array($variable);
     }
 
     /**
@@ -501,7 +599,7 @@ final class ArrMixin
      * @param  mixed  $variable  The variable to check
      * @return bool True if the variable should be cast to a JSON string, false otherwise
      */
-    private static function shouldCastToJson(mixed $variable): bool
+    private function shouldCastToJson(mixed $variable): bool
     {
         // Check for native PHP 8 Stringable interface
         if ($variable instanceof StringableContract) {
@@ -519,11 +617,7 @@ final class ArrMixin
         }
 
         // Resources can be converted
-        if (is_array($variable)) {
-            return true;
-        }
-
         // Arrays and null cannot be converted to strings directly
-        return false;
+        return is_array($variable);
     }
 }
