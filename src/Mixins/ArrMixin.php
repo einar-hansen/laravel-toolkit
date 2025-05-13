@@ -14,7 +14,6 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Enumerable;
 use Illuminate\Support\Stringable;
 use JsonSerializable;
 use Stringable as StringableContract;
@@ -158,10 +157,6 @@ final class ArrMixin
                 return $value->toArray();
             }
 
-            if ($value instanceof Enumerable) {
-                return $value->all();
-            }
-
             // Check for Laravel's Jsonable interface
             if ($value instanceof Jsonable) {
                 $value = $value->toJson();
@@ -201,10 +196,6 @@ final class ArrMixin
 
             if ($value instanceof Arrayable) {
                 return $value->toArray();
-            }
-
-            if ($value instanceof Enumerable) {
-                return $value->all();
             }
 
             // Check for Laravel's Jsonable interface
