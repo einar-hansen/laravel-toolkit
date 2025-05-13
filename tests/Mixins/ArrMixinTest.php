@@ -9,10 +9,16 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use DateTimeImmutable;
 use EinarHansen\Toolkit\Mixins\ArrMixin;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Stringable;
+use JsonSerializable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Stringable as StringableContract;
 
 #[CoversClass(ArrMixin::class)]
 final class ArrMixinTest extends TestCase
@@ -619,6 +625,310 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
+    public static function arrayProvider(): array
+    {
+        $arrayValue = ['key' => 'value', 'nested' => ['foo' => 'bar']];
+        $arrayableObj = new class() implements Arrayable
+        {
+            public function toArray(): array
+            {
+                return ['from_arrayable' => 'value'];
+            }
+        };
+        $enumerableObj = new Collection(['from_enumerable' => 'value']);
+
+        $jsonableObj = new class() implements Jsonable
+        {
+            public function toJson($options = 0): string
+            {
+                return json_encode(['from_jsonable' => 'value'], $options);
+            }
+        };
+        $jsonSerializableObj = new class() implements JsonSerializable
+        {
+            public function jsonSerialize(): mixed
+            {
+                return ['from_jsonSerializable' => 'value'];
+            }
+        };
+        $stringableObj = new class() implements StringableContract
+        {
+            public function __toString(): string
+            {
+                return '{"from_stringable":"value"}';
+            }
+        };
+        $invalidJsonString = '{"invalid":json';
+
+        $data = [
+            'array_val' => $arrayValue,
+            'arrayable_val' => $arrayableObj,
+            'enumerable_val' => $enumerableObj,
+            'jsonable_val' => $jsonableObj,
+            'json_serializable_val' => $jsonSerializableObj,
+            'stringable_val' => $stringableObj,
+            'json_string' => '{"from_json":"value"}',
+            'invalid_json_string' => $invalidJsonString,
+            'string_val' => 'simple string',
+            'int_val' => 123,
+            'float_val' => 45.67,
+            'bool_val' => true,
+            'null_val' => null,
+            'nested' => ['array_key' => $arrayValue],
+        ];
+
+        return [
+            'array value' => [$data, 'array_val', [], $arrayValue],
+            'arrayable object' => [$data, 'arrayable_val', [], ['from_arrayable' => 'value']],
+            'enumerable object' => [$data, 'enumerable_val', [], ['from_enumerable' => 'value']],
+            'jsonable object' => [$data, 'jsonable_val', [], ['from_jsonable' => 'value']],
+            'json serializable object' => [$data, 'json_serializable_val', [], ['from_jsonSerializable' => 'value']],
+            'stringable object with valid JSON' => [$data, 'stringable_val', [], ['from_stringable' => 'value']],
+            'JSON string' => [$data, 'json_string', [], ['from_json' => 'value']],
+            'invalid JSON string' => [$data, 'invalid_json_string', [], [$invalidJsonString]],
+            'simple string' => [$data, 'string_val', [], ['simple string']],
+            'integer' => [$data, 'int_val', [], [123]],
+            'float' => [$data, 'float_val', [], [45.67]],
+            'boolean' => [$data, 'bool_val', [], [true]],
+            'null value' => [$data, 'null_val', ['default' => 'array'], ['default' => 'array']],
+            'missing key' => [$data, 'missing_key', ['default' => 'array'], ['default' => 'array']],
+            'nested key' => [$data, 'nested.array_key', [], $arrayValue],
+            'empty array' => [[], 'any_key', ['fallback'], ['fallback']],
+        ];
+    }
+
+    public static function arrayOrNullProvider(): array
+    {
+        $arrayValue = ['key' => 'value', 'nested' => ['foo' => 'bar']];
+        $arrayableObj = new class() implements Arrayable
+        {
+            public function toArray(): array
+            {
+                return ['from_arrayable' => 'value'];
+            }
+        };
+        $enumerableObj = new Collection(['from_enumerable' => 'value']);
+
+        $jsonableObj = new class() implements Jsonable
+        {
+            public function toJson($options = 0): string
+            {
+                return json_encode(['from_jsonable' => 'value'], $options);
+            }
+        };
+        $jsonSerializableObj = new class() implements JsonSerializable
+        {
+            public function jsonSerialize(): mixed
+            {
+                return ['from_jsonSerializable' => 'value'];
+            }
+        };
+        $stringableObj = new class() implements StringableContract
+        {
+            public function __toString(): string
+            {
+                return '{"from_stringable":"value"}';
+            }
+        };
+        $invalidJsonString = '{"invalid":json';
+
+        $data = [
+            'array_val' => $arrayValue,
+            'arrayable_val' => $arrayableObj,
+            'enumerable_val' => $enumerableObj,
+            'jsonable_val' => $jsonableObj,
+            'json_serializable_val' => $jsonSerializableObj,
+            'stringable_val' => $stringableObj,
+            'json_string' => '{"from_json":"value"}',
+            'invalid_json_string' => $invalidJsonString,
+            'string_val' => 'simple string',
+            'int_val' => 123,
+            'float_val' => 45.67,
+            'bool_val' => true,
+            'null_val' => null,
+            'nested' => ['array_key' => $arrayValue],
+        ];
+
+        return [
+            'array value' => [$data, 'array_val', $arrayValue],
+            'arrayable object' => [$data, 'arrayable_val', ['from_arrayable' => 'value']],
+            'enumerable object' => [$data, 'enumerable_val', ['from_enumerable' => 'value']],
+            'jsonable object' => [$data, 'jsonable_val', ['from_jsonable' => 'value']],
+            'json serializable object' => [$data, 'json_serializable_val', ['from_jsonSerializable' => 'value']],
+            'stringable object with valid JSON' => [$data, 'stringable_val', ['from_stringable' => 'value']],
+            'JSON string' => [$data, 'json_string', ['from_json' => 'value']],
+            'invalid JSON string' => [$data, 'invalid_json_string', [$invalidJsonString]],
+            'simple string' => [$data, 'string_val', ['simple string']],
+            'integer' => [$data, 'int_val', [123]],
+            'float' => [$data, 'float_val', [45.67]],
+            'boolean' => [$data, 'bool_val', [true]],
+            'null value' => [$data, 'null_val', null],
+            'missing key' => [$data, 'missing_key', null],
+            'nested key' => [$data, 'nested.array_key', $arrayValue],
+            'empty array' => [[], 'any_key', null],
+        ];
+    }
+
+    public static function collectionProvider(): array
+    {
+        $arrayValue = ['key' => 'value', 'nested' => ['foo' => 'bar']];
+        $arrayableObj = new class() implements Arrayable
+        {
+            public function toArray(): array
+            {
+                return ['from_arrayable' => 'value'];
+            }
+        };
+
+        $enumerableObj = new Collection(['from_enumerable' => 'value']);
+
+        $jsonableObj = new class() implements Jsonable
+        {
+            public function toJson($options = 0): string
+            {
+                return json_encode(['from_jsonable' => 'value'], $options);
+            }
+        };
+
+        $data = [
+            'array_val' => $arrayValue,
+            'arrayable_val' => $arrayableObj,
+            'enumerable_val' => $enumerableObj,
+            'jsonable_val' => $jsonableObj,
+            'json_string' => '{"from_json":"value"}',
+            'string_val' => 'simple string',
+            'int_val' => 123,
+            'null_val' => null,
+            'nested' => ['array_key' => $arrayValue],
+        ];
+
+        $defaultCollection = new Collection(['default' => 'collection']);
+        $defaultArray = ['default' => 'array'];
+
+        return [
+            'array value with no default' => [
+                $data, 'array_val', new Collection(),
+                new Collection($arrayValue),
+            ],
+            'arrayable object with collection default' => [
+                $data, 'arrayable_val', $defaultCollection,
+                new Collection(['from_arrayable' => 'value']),
+            ],
+            'enumerable object with array default' => [
+                $data, 'enumerable_val', $defaultArray,
+                new Collection(['from_enumerable' => 'value']),
+            ],
+            'jsonable object with collection default' => [
+                $data, 'jsonable_val', $defaultCollection,
+                new Collection(['from_jsonable' => 'value']),
+            ],
+            'JSON string with array default' => [
+                $data, 'json_string', $defaultArray,
+                new Collection(['from_json' => 'value']),
+            ],
+            'string value with no default' => [
+                $data, 'string_val', new Collection(),
+                new Collection(['simple string']),
+            ],
+            'integer with collection default' => [
+                $data, 'int_val', $defaultCollection,
+                new Collection([123]),
+            ],
+            'null value with collection default' => [
+                $data, 'null_val', $defaultCollection,
+                $defaultCollection,
+            ],
+            'null value with array default' => [
+                $data, 'null_val', $defaultArray,
+                new Collection($defaultArray),
+            ],
+            'missing key with collection default' => [
+                $data, 'missing_key', $defaultCollection,
+                $defaultCollection,
+            ],
+            'missing key with array default' => [
+                $data, 'missing_key', $defaultArray,
+                new Collection($defaultArray),
+            ],
+            'nested key with no default' => [
+                $data, 'nested.array_key', new Collection(),
+                new Collection($arrayValue),
+            ],
+            'empty array with collection default' => [
+                [], 'any_key', $defaultCollection,
+                $defaultCollection,
+            ],
+        ];
+    }
+
+    public static function collectionOrNullProvider(): array
+    {
+        $arrayValue = ['key' => 'value', 'nested' => ['foo' => 'bar']];
+        $arrayableObj = new class() implements Arrayable
+        {
+            public function toArray(): array
+            {
+                return ['from_arrayable' => 'value'];
+            }
+        };
+
+        $enumerableObj = new Collection(['from_enumerable' => 'value']);
+
+        $data = [
+            'array_val' => $arrayValue,
+            'arrayable_val' => $arrayableObj,
+            'enumerable_val' => $enumerableObj,
+            'json_string' => '{"from_json":"value"}',
+            'string_val' => 'simple string',
+            'int_val' => 123,
+            'null_val' => null,
+            'nested' => ['array_key' => $arrayValue],
+        ];
+
+        return [
+            'array value' => [
+                $data, 'array_val',
+                new Collection($arrayValue),
+            ],
+            'arrayable object' => [
+                $data, 'arrayable_val',
+                new Collection(['from_arrayable' => 'value']),
+            ],
+            'enumerable object' => [
+                $data, 'enumerable_val',
+                new Collection(['from_enumerable' => 'value']),
+            ],
+            'JSON string' => [
+                $data, 'json_string',
+                new Collection(['from_json' => 'value']),
+            ],
+            'string value' => [
+                $data, 'string_val',
+                new Collection(['simple string']),
+            ],
+            'integer' => [
+                $data, 'int_val',
+                new Collection([123]),
+            ],
+            'null value' => [
+                $data, 'null_val',
+                null,
+            ],
+            'missing key' => [
+                $data, 'missing_key',
+                null,
+            ],
+            'nested key' => [
+                $data, 'nested.array_key',
+                new Collection($arrayValue),
+            ],
+            'empty array' => [
+                [], 'any_key',
+                null,
+            ],
+        ];
+    }
+
     #[DataProvider('tryKeysProvider')]
     #[Test]
     public function it_can_try_multiple_keys_and_return_first_found(array $array, array $keys, mixed $expected): void
@@ -714,6 +1024,53 @@ final class ArrMixinTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
+    #[Test]
+    public function it_can_get_a_value_as_stringable_with_default(): void
+    {
+        $closure = $this->arrMixin->stringable();
+
+        $array = [
+            'key1' => 'Hello',
+            'key2' => 123,
+            'key3' => null,
+            'key4' => false,
+        ];
+
+        $this->assertSame('Hello', (string) $closure($array, 'key1', new Stringable('Default')));
+        $this->assertInstanceOf(Stringable::class, $closure($array, 'key1', new Stringable('Default')));
+        $this->assertSame('123', (string) $closure($array, 'key2', new Stringable('Default')));
+        $this->assertSame('Default', (string) $closure($array, 'key3', new Stringable('Default')));
+        $this->assertSame('', (string) $closure($array, 'key4', new Stringable('Default')));
+        $this->assertSame('Default', (string) $closure($array, 'key5', new Stringable('Default')));
+        $this->assertSame('Default', (string) $closure($array, 'key5', 'Default'));
+        $this->assertInstanceOf(Stringable::class, $closure($array, 'key5', 'Default'));
+    }
+
+    #[Test]
+    public function it_can_get_a_value_as_stringable_or_null(): void
+    {
+        $closure = $this->arrMixin->stringableOrNull();
+
+        $array = [
+            'key1' => 'World',      // Existing string
+            'key2' => 456,          // Numeric (integer)
+            'key3' => null,         // Null value
+            'key4' => false,        // Boolean false
+            'key5' => true,         // Boolean true
+            'key6' => 12.34,        // Float
+            'key7' => ['key' => 'value'], // Array
+        ];
+
+        $this->assertSame('World', (string) $closure($array, 'key1')); // String remains unchanged
+        $this->assertSame('456', (string) $closure($array, 'key2'));  // Integer converted to string
+        $this->assertNull($closure($array, 'key3'));                 // Null remains null
+        $this->assertSame('', (string) $closure($array, 'key4'));    // Boolean false converted to empty string
+        $this->assertSame('1', (string) $closure($array, 'key5'));   // Boolean true converted to '1'
+        $this->assertSame('12.34', (string) $closure($array, 'key6')); // Float converted to string
+        $this->assertSame('{"key":"value"}', (string) $closure($array, 'key7'));                 // Non-scalar (array) returns null
+        $this->assertNull($closure($array, 'key8'));                 // Missing key returns null
+    }
+
     #[DataProvider('booleanOrNullProvider')]
     #[Test]
     public function it_can_get_a_value_as_boolean_or_null(array $array, string $key, ?bool $expected): void
@@ -775,5 +1132,230 @@ final class ArrMixinTest extends TestCase
             $this->assertInstanceOf(CarbonInterface::class, $result);
             $this->assertEquals($expectedDateTime, $result);
         }
+    }
+
+    #[DataProvider('arrayProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_array_with_default(array $array, string $key, array $default, array $expected): void
+    {
+        $closure = $this->arrMixin->array();
+        $result = $closure($array, $key, $default);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('arrayOrNullProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_array_or_null(array $array, string $key, ?array $expected): void
+    {
+        $closure = $this->arrMixin->arrayOrNull();
+        $result = $closure($array, $key);
+        $this->assertSame($expected, $result);
+    }
+
+    #[DataProvider('collectionProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_collection_with_default(
+        array $array,
+        string $key,
+        Collection|array $default,
+        Collection $expected
+    ): void {
+        $closure = $this->arrMixin->collection();
+        $result = $closure($array, $key, $default);
+
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertEquals($expected, $result);
+    }
+
+    #[DataProvider('collectionOrNullProvider')]
+    #[Test]
+    public function it_can_get_a_value_as_collection_or_null(
+        array $array,
+        string $key,
+        ?Collection $expected
+    ): void {
+        $closure = $this->arrMixin->collectionOrNull();
+        $result = $closure($array, $key);
+
+        if (! $expected instanceof Collection) {
+            $this->assertNull($result);
+        } else {
+            $this->assertInstanceOf(Collection::class, $result);
+            $this->assertEquals($expected, $result);
+        }
+    }
+
+    #[Test]
+    public function it_can_use_to_string_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toString();
+        $this->assertSame('test', $method(['key' => 'test'], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_string_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toStringOrNull();
+        $this->assertSame('test', $method(['key' => 'test'], 'key'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_stringable_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toStringable();
+        $result = $method(['key' => 'test'], 'key');
+        $this->assertInstanceOf(Stringable::class, $result);
+        $this->assertSame('test', (string) $result);
+    }
+
+    #[Test]
+    public function it_can_use_to_stringable_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toStringableOrNull();
+        $result = $method(['key' => 'test'], 'key');
+        $this->assertInstanceOf(Stringable::class, $result);
+        $this->assertSame('test', (string) $result);
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_integer_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toInteger();
+        $this->assertSame(123, $method(['key' => '123'], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_integer_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toIntegerOrNull();
+        $this->assertSame(123, $method(['key' => '123'], 'key'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_float_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toFloat();
+        $this->assertSame(123.45, $method(['key' => '123.45'], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_float_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toFloatOrNull();
+        $this->assertSame(123.45, $method(['key' => '123.45'], 'key'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_boolean_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toBoolean();
+        $this->assertTrue($method(['key' => 'true'], 'key'));
+        $this->assertFalse($method(['key' => 'false'], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_boolean_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toBooleanOrNull();
+        $this->assertTrue($method(['key' => 'true'], 'key'));
+        $this->assertFalse($method(['key' => 'false'], 'key'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_date_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toDate();
+        $result = $method(['key' => '2024-03-14'], 'key');
+        $this->assertSame('2024-03-14', $result->format('Y-m-d'));
+    }
+
+    #[Test]
+    public function it_can_use_to_date_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toDateOrNull();
+        $result = $method(['key' => '2024-03-14'], 'key');
+        $this->assertSame('2024-03-14', $result->format('Y-m-d'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_date_time_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toDateTime();
+        $result = $method(['key' => '2024-03-14 15:30:00'], 'key');
+        $this->assertSame('2024-03-14 15:30:00', $result->format('Y-m-d H:i:s'));
+    }
+
+    #[Test]
+    public function it_can_use_to_date_time_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toDateTimeOrNull();
+        $result = $method(['key' => '2024-03-14 15:30:00'], 'key');
+        $this->assertSame('2024-03-14 15:30:00', $result->format('Y-m-d H:i:s'));
+        $this->assertNull($method(['key' => null], 'key'));
+    }
+
+    #[Test]
+    public function it_can_use_to_array_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toArray();
+        $result = $method(['key' => ['nested' => 'value']], 'key');
+        $this->assertSame(['nested' => 'value'], $result);
+    }
+
+    #[Test]
+    public function it_can_use_to_array_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toArrayOrNull();
+        $result1 = $method(['key' => ['nested' => 'value']], 'key');
+        $this->assertSame(['nested' => 'value'], $result1);
+        $result2 = $method(['key' => null], 'key');
+        $this->assertNull($result2);
+    }
+
+    #[Test]
+    public function it_can_use_to_collection_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toCollection();
+        $result = $method(['key' => ['nested' => 'value']], 'key');
+
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertEquals(new Collection(['nested' => 'value']), $result);
+    }
+
+    #[Test]
+    public function it_can_use_to_collection_or_null_alias(): void
+    {
+        $mixin = new ArrMixin();
+        $method = $mixin->toCollectionOrNull();
+
+        $result1 = $method(['key' => ['nested' => 'value']], 'key');
+        $this->assertInstanceOf(Collection::class, $result1);
+        $this->assertEquals(new Collection(['nested' => 'value']), $result1);
+
+        $result2 = $method(['key' => null], 'key');
+        $this->assertNull($result2);
     }
 }

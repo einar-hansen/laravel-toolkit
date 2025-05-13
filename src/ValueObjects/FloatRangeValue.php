@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\ValueObjects;
 
+use ArrayAccess;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Stringable;
@@ -59,9 +60,9 @@ abstract class FloatRangeValue implements Stringable
      * Attempts to create a new instance from the given array and key.
      * Returns null if the value is invalid or not present.
      *
-     * @param  array<string, mixed>  $array
+     * @param  ArrayAccess<string, mixed>|array<string, mixed>  $array
      */
-    public static function tryFromArray(array $array, string $key): ?static
+    public static function tryFromArray(ArrayAccess|array $array, string|int|null $key): ?static
     {
         $value = Arr::get($array, $key);
 
@@ -75,13 +76,13 @@ abstract class FloatRangeValue implements Stringable
     /**
      * Creates a new instance from the given array and key.
      * Uses default if the value is invalid or not present.
-     * Throws an exception if the resulting value is invalid.
+     * Throw an exception if the resulting value is invalid.
      *
-     * @param  array<string, mixed>  $array
+     * @param  ArrayAccess<string, mixed>|array<string, mixed>  $array
      *
      * @throws InvalidArgumentException If the value is invalid
      */
-    public static function fromArray(array $array, string $key, float|int|string $default = 0): static
+    public static function fromArray(ArrayAccess|array $array, string|int|null $key, float|int|string $default = 0): static
     {
         $value = Arr::get($array, $key, $default);
 

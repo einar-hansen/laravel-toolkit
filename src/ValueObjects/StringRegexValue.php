@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\ValueObjects;
 
+use ArrayAccess;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Override;
@@ -49,9 +50,9 @@ abstract class StringRegexValue implements Stringable
      * Attempts to create a new instance from the given value.
      * Returns null if the value is invalid.
      *
-     * @param  array<string, mixed>  $array
+     * @param  ArrayAccess<string, mixed>|array<string, mixed>  $array
      */
-    public static function tryFromArray(array $array, string $key): ?static
+    public static function tryFromArray(ArrayAccess|array $array, string|int|null $key): ?static
     {
         $value = Arr::get($array, $key);
         try {
@@ -76,11 +77,11 @@ abstract class StringRegexValue implements Stringable
      * Creates a new instance from the given value.
      * Throws an exception if the value is invalid.
      *
-     * @param  array<string, mixed>  $array
+     * @param  ArrayAccess<string, mixed>|array<string, mixed>  $array
      *
      * @throws InvalidArgumentException If the value is invalid
      */
-    public static function fromArray(array $array, string $key, string $default = ''): static
+    public static function fromArray(ArrayAccess|array $array, string|int|null $key, string $default = ''): static
     {
         $value = Arr::get($array, $key, $default);
 
@@ -100,7 +101,7 @@ abstract class StringRegexValue implements Stringable
     }
 
     /**
-     * Get custom error message for regex validation failure.
+     * Get a custom error message for regex validation failure.
      * If not overridden, a default message will be used.
      */
     protected function getPatternErrorMessage(): string
