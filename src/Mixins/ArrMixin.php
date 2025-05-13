@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use Illuminate\Support\Stringable;
 use JsonSerializable;
@@ -227,6 +228,34 @@ final class ArrMixin
 
             // For skalarer og andre objekttyper, bruk (array) type-casting.
             return (array) $value;
+        };
+    }
+
+    public function collection(): Closure
+    {
+        return static function (ArrayAccess|array $source, string|int|null $key, Collection|array $default = new Collection): Collection {
+            $method = new ArrMixin()->toArrayOrNull();
+            $array = $method($source, $key);
+
+            if ($array === null) {
+                return $default instanceof Collection ? $default : new Collection($default);
+            }
+
+            return new Collection($array);
+        };
+    }
+
+    public function collectionOrNull(): Closure
+    {
+        return static function (ArrayAccess|array $source, string|int|null $key): ?Collection {
+            $method = new ArrMixin()->toArrayOrNull();
+            $array = $method($source, $key);
+
+            if ($array === null) {
+                return null;
+            }
+
+            return new Collection($array);
         };
     }
 
@@ -551,6 +580,16 @@ final class ArrMixin
     public function toArrayOrNull(): Closure
     {
         return $this->arrayOrNull();
+    }
+
+    public function toCollection(): Closure
+    {
+        return $this->collection();
+    }
+
+    public function toCollectionOrNull(): Closure
+    {
+        return $this->collectionOrNull();
     }
 
     /**
