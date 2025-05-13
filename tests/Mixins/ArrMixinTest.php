@@ -9,6 +9,7 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use DateTimeImmutable;
 use EinarHansen\Toolkit\Mixins\ArrMixin;
+use Illuminate\Support\Stringable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -712,6 +713,53 @@ final class ArrMixinTest extends TestCase
         $closure = $this->arrMixin->boolean();
         $result = $closure($array, $key, $default);
         $this->assertSame($expected, $result);
+    }
+
+    #[Test]
+    public function it_can_get_a_value_as_stringable_with_default(): void
+    {
+        $closure = $this->arrMixin->stringable();
+
+        $array = [
+            'key1' => 'Hello',
+            'key2' => 123,
+            'key3' => null,
+            'key4' => false,
+        ];
+
+        $this->assertSame('Hello', (string) $closure($array, 'key1', new Stringable('Default')));
+        $this->assertInstanceOf(Stringable::class, $closure($array, 'key1', new Stringable('Default')));
+        $this->assertSame('123', (string) $closure($array, 'key2', new Stringable('Default')));
+        $this->assertSame('Default', (string) $closure($array, 'key3', new Stringable('Default')));
+        $this->assertSame('', (string) $closure($array, 'key4', new Stringable('Default')));
+        $this->assertSame('Default', (string) $closure($array, 'key5', new Stringable('Default')));
+        $this->assertSame('Default', (string) $closure($array, 'key5', 'Default'));
+        $this->assertInstanceOf(Stringable::class, $closure($array, 'key5', 'Default'));
+    }
+
+    #[Test]
+    public function it_can_get_a_value_as_stringable_or_null(): void
+    {
+        $closure = $this->arrMixin->stringableOrNull();
+
+        $array = [
+            'key1' => 'World',      // Existing string
+            'key2' => 456,          // Numeric (integer)
+            'key3' => null,         // Null value
+            'key4' => false,        // Boolean false
+            'key5' => true,         // Boolean true
+            'key6' => 12.34,        // Float
+            'key7' => ['key' => 'value'], // Array
+        ];
+
+        $this->assertSame('World', (string) $closure($array, 'key1')); // String remains unchanged
+        $this->assertSame('456', (string) $closure($array, 'key2'));  // Integer converted to string
+        $this->assertNull($closure($array, 'key3'));                 // Null remains null
+        $this->assertSame('', (string) $closure($array, 'key4'));    // Boolean false converted to empty string
+        $this->assertSame('1', (string) $closure($array, 'key5'));   // Boolean true converted to '1'
+        $this->assertSame('12.34', (string) $closure($array, 'key6')); // Float converted to string
+        $this->assertSame('{"key":"value"}', (string) $closure($array, 'key7'));                 // Non-scalar (array) returns null
+        $this->assertNull($closure($array, 'key8'));                 // Missing key returns null
     }
 
     #[DataProvider('booleanOrNullProvider')]

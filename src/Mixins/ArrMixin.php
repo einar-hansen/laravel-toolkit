@@ -10,8 +10,11 @@ use Carbon\CarbonInterface;
 use Closure;
 use DateTimeInterface;
 use Exception;
+use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Stringable;
+use JsonSerializable;
+use Stringable as StringableContract;
 
 final class ArrMixin
 {
@@ -70,11 +73,16 @@ final class ArrMixin
         return function (ArrayAccess|array $array, string|int|null $key, string $default = ''): string {
             $value = Arr::get($array, $key, $default);
 
-            if ($value === null) {
-                return $default;
+            if (static::canBeCastToString($value)) {
+                if (static::shouldCastToJson($value)) {
+                    $value = json_encode($value);
+                }
+
+                return is_string($value) ? $value : (string) $value;
             }
 
-            return is_string($value) ? $value : (string) $value;
+            return $default;
+
         };
     }
 
@@ -83,7 +91,15 @@ final class ArrMixin
         return function (ArrayAccess|array $array, string|int|null $key): ?string {
             $value = Arr::get($array, $key);
 
-            return $value === null ? null : (string) $value;
+            if (static::canBeCastToString($value)) {
+                if (static::shouldCastToJson($value)) {
+                    $value = json_encode($value);
+                }
+
+                return is_string($value) ? $value : (string) $value;
+            }
+
+            return null;
         };
     }
 
@@ -92,11 +108,16 @@ final class ArrMixin
         return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = ''): Stringable {
             $value = Arr::get($array, $key, $default);
 
-            if ($value === null) {
-                return $default;
+            if (static::canBeCastToString($value)) {
+                if (static::shouldCastToJson($value)) {
+                    $value = json_encode($value);
+                }
+
+                return new Stringable(is_string($value) ? $value : (string) $value);
             }
 
-            return new Stringable(is_string($value) ? $value : (string) $value);
+            return new Stringable($default);
+
         };
     }
 
@@ -105,7 +126,15 @@ final class ArrMixin
         return function (ArrayAccess|array $array, string|int|null $key): ?Stringable {
             $value = Arr::get($array, $key);
 
-            return $value === null ? null : new Stringable((string) $value);
+            if (static::canBeCastToString($value)) {
+                if (static::shouldCastToJson($value)) {
+                    $value = json_encode($value);
+                }
+
+                return new Stringable(is_string($value) ? $value : (string) $value);
+            }
+
+            return null;
         };
     }
 
