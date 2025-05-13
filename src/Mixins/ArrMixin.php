@@ -9,6 +9,7 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Closure;
 use DateTimeInterface;
+use EinarHansen\Toolkit\Utilities\StringHelper;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -70,13 +71,13 @@ final class ArrMixin
         return fn (ArrayAccess|array $array, string|int|null $key): bool => empty(Arr::get($array, $key));
     }
 
-    public function string(): Closure
+    public function toString(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key, string $default = ''): string {
             $value = Arr::get($array, $key, $default);
 
-            if ($this->canBeCastToString($value)) {
-                if ($this->shouldCastToJson($value)) {
+            if (StringHelper::canBeCastToString($value)) {
+                if (StringHelper::shouldCastToJson($value)) {
                     $value = json_encode($value);
                 }
 
@@ -88,13 +89,13 @@ final class ArrMixin
         };
     }
 
-    public function stringOrNull(): Closure
+    public function toStringOrNull(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key): ?string {
             $value = Arr::get($array, $key);
 
-            if ($this->canBeCastToString($value)) {
-                if ($this->shouldCastToJson($value)) {
+            if (StringHelper::canBeCastToString($value)) {
+                if (StringHelper::shouldCastToJson($value)) {
                     $value = json_encode($value);
                 }
 
@@ -105,13 +106,13 @@ final class ArrMixin
         };
     }
 
-    public function stringable(): Closure
+    public function toStringable(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = ''): Stringable {
             $value = Arr::get($array, $key, $default);
 
-            if ($this->canBeCastToString($value)) {
-                if ($this->shouldCastToJson($value)) {
+            if (StringHelper::canBeCastToString($value)) {
+                if (StringHelper::shouldCastToJson($value)) {
                     $value = json_encode($value);
                 }
 
@@ -123,13 +124,13 @@ final class ArrMixin
         };
     }
 
-    public function stringableOrNull(): Closure
+    public function toStringableOrNull(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key): ?Stringable {
             $value = Arr::get($array, $key);
 
-            if ($this->canBeCastToString($value)) {
-                if ($this->shouldCastToJson($value)) {
+            if (StringHelper::canBeCastToString($value)) {
+                if (StringHelper::shouldCastToJson($value)) {
                     $value = json_encode($value);
                 }
 
@@ -140,7 +141,7 @@ final class ArrMixin
         };
     }
 
-    public function array(): Closure
+    public function toArray(): Closure
     {
         return static function (ArrayAccess|array $source, string|int|null $key, array $default = []): array {
             $value = Arr::get($source, $key);
@@ -181,7 +182,7 @@ final class ArrMixin
         };
     }
 
-    public function arrayOrNull(): Closure
+    public function toArrayOrNull(): Closure
     {
         return static function (ArrayAccess|array $source, string|int|null $key): ?array {
             $value = Arr::get($source, $key);
@@ -222,7 +223,7 @@ final class ArrMixin
         };
     }
 
-    public function collection(): Closure
+    public function toCollection(): Closure
     {
         return static function (ArrayAccess|array $source, string|int|null $key, Collection|array $default = new Collection): Collection {
             $method = new ArrMixin()->toArrayOrNull();
@@ -236,7 +237,7 @@ final class ArrMixin
         };
     }
 
-    public function collectionOrNull(): Closure
+    public function toCollectionOrNull(): Closure
     {
         return static function (ArrayAccess|array $source, string|int|null $key): ?Collection {
             $method = new ArrMixin()->toArrayOrNull();
@@ -250,7 +251,7 @@ final class ArrMixin
         };
     }
 
-    public function integer(): Closure
+    public function toInteger(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key, int $default = 0): int {
             $value = Arr::get($array, $key, $default);
@@ -266,7 +267,7 @@ final class ArrMixin
         };
     }
 
-    public function integerOrNull(): Closure
+    public function toIntegerOrNull(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key): ?int {
             $value = Arr::get($array, $key);
@@ -278,7 +279,7 @@ final class ArrMixin
         };
     }
 
-    public function float(): Closure
+    public function toFloat(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key, float $default = 0.0): float {
             $value = Arr::get($array, $key, $default);
@@ -294,7 +295,7 @@ final class ArrMixin
         };
     }
 
-    public function floatOrNull(): Closure
+    public function toFloatOrNull(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key): ?float {
             $value = Arr::get($array, $key);
@@ -306,7 +307,7 @@ final class ArrMixin
         };
     }
 
-    public function boolean(): Closure
+    public function toBoolean(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key, bool $default = false): bool {
             $value = Arr::get($array, $key, $default);
@@ -341,7 +342,7 @@ final class ArrMixin
         };
     }
 
-    public function booleanOrNull(): Closure
+    public function toBooleanOrNull(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key): ?bool {
             $value = Arr::get($array, $key);
@@ -376,7 +377,7 @@ final class ArrMixin
         };
     }
 
-    public function date(): Closure
+    public function toDate(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key, $default = null): CarbonImmutable {
             $value = Arr::get($array, $key);
@@ -413,7 +414,7 @@ final class ArrMixin
         };
     }
 
-    public function dateOrNull(): Closure
+    public function toDateOrNull(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key): ?CarbonImmutable {
             $value = Arr::get($array, $key);
@@ -434,7 +435,7 @@ final class ArrMixin
         };
     }
 
-    public function dateTime(): Closure
+    public function toDateTime(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key, $default = null): CarbonInterface {
             $value = Arr::get($array, $key);
@@ -472,7 +473,7 @@ final class ArrMixin
         };
     }
 
-    public function dateTimeOrNull(): Closure
+    public function toDateTimeOrNull(): Closure
     {
         return function (ArrayAccess|array $array, string|int|null $key): ?CarbonInterface {
             $value = Arr::get($array, $key);
@@ -491,163 +492,5 @@ final class ArrMixin
                 return null;
             }
         };
-    }
-
-    public function toString(): Closure
-    {
-        return $this->string();
-    }
-
-    public function toStringOrNull(): Closure
-    {
-        return $this->stringOrNull();
-    }
-
-    public function toStringable(): Closure
-    {
-        return $this->stringable();
-    }
-
-    public function toStringableOrNull(): Closure
-    {
-        return $this->stringableOrNull();
-    }
-
-    public function toInteger(): Closure
-    {
-        return $this->integer();
-    }
-
-    public function toIntegerOrNull(): Closure
-    {
-        return $this->integerOrNull();
-    }
-
-    public function toFloat(): Closure
-    {
-        return $this->float();
-    }
-
-    public function toFloatOrNull(): Closure
-    {
-        return $this->floatOrNull();
-    }
-
-    public function toBoolean(): Closure
-    {
-        return $this->boolean();
-    }
-
-    public function toBooleanOrNull(): Closure
-    {
-        return $this->booleanOrNull();
-    }
-
-    public function toDate(): Closure
-    {
-        return $this->date();
-    }
-
-    public function toDateOrNull(): Closure
-    {
-        return $this->dateOrNull();
-    }
-
-    public function toDateTime(): Closure
-    {
-        return $this->dateTime();
-    }
-
-    public function toDateTimeOrNull(): Closure
-    {
-        return $this->dateTimeOrNull();
-    }
-
-    public function toArray(): Closure
-    {
-        return $this->array();
-    }
-
-    public function toArrayOrNull(): Closure
-    {
-        return $this->arrayOrNull();
-    }
-
-    public function toCollection(): Closure
-    {
-        return $this->collection();
-    }
-
-    public function toCollectionOrNull(): Closure
-    {
-        return $this->collectionOrNull();
-    }
-
-    /**
-     * Determines if a variable can be cast to a string.
-     *
-     * @param  mixed  $variable  The variable to check
-     * @return bool True if the variable can be cast to a string, false otherwise
-     */
-    private function canBeCastToString(mixed $variable): bool
-    {
-        // Check for native PHP 8 Stringable interface
-        if ($variable instanceof StringableContract) {
-            return true;
-        }
-
-        // Check for Laravel's Jsonable interface
-        if ($variable instanceof Jsonable) {
-            return true;
-        }
-
-        // Check for PHP's JsonSerializable interface
-        if ($variable instanceof JsonSerializable) {
-            // Note: This doesn't guarantee a string result, as jsonSerialize can return any type
-            // You might want to add additional checks here
-            return true;
-        }
-
-        // Scalar types (excludes null)
-        if (is_scalar($variable)) {
-            return true;
-        }
-
-        // Resources can be converted
-        if (is_resource($variable)) {
-            return true;
-        }
-
-        // Resources can be converted
-        // Arrays and null cannot be converted to strings directly
-        return is_array($variable);
-    }
-
-    /**
-     * Determines if a variable can be cast to a string.
-     *
-     * @param  mixed  $variable  The variable to check
-     * @return bool True if the variable should be cast to a JSON string, false otherwise
-     */
-    private function shouldCastToJson(mixed $variable): bool
-    {
-        // Check for native PHP 8 Stringable interface
-        if ($variable instanceof StringableContract) {
-            return false;
-        }
-
-        // Check for Laravel's Jsonable interface
-        if ($variable instanceof Jsonable) {
-            return true;
-        }
-
-        // Check for PHP's JsonSerializable interface
-        if ($variable instanceof JsonSerializable) {
-            return true;
-        }
-
-        // Resources can be converted
-        // Arrays and null cannot be converted to strings directly
-        return is_array($variable);
     }
 }

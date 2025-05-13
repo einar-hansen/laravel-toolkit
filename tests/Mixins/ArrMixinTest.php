@@ -11,6 +11,7 @@ use DateTimeImmutable;
 use EinarHansen\Toolkit\Mixins\ArrMixin;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
 use JsonSerializable;
@@ -31,9 +32,11 @@ final class ArrMixinTest extends TestCase
     {
         parent::setUp();
         $this->arrMixin = new ArrMixin;
+        Arr::mixin($this->arrMixin);
         // Set a known date for predictable 'now' in tests
         $this->knownDate = CarbonImmutable::create(2024, 5, 15, 12, 30, 45, 'UTC');
         CarbonImmutable::setTestNow($this->knownDate);
+
     }
 
     protected function tearDown(): void
@@ -933,8 +936,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_try_multiple_keys_and_return_first_found(array $array, array $keys, mixed $expected): void
     {
-        $closure = $this->arrMixin->tryKeys();
-        $result = $closure($array, ...$keys);
+        $result = Arr::tryKeys($array, ...$keys);
         $this->assertSame($expected, $result);
     }
 
@@ -942,8 +944,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_checks_if_key_is_set(array $array, string $key, bool $expected): void
     {
-        $closure = $this->arrMixin->isset();
-        $result = $closure($array, $key);
+        $result = Arr::isset($array, $key);
         $this->assertSame($expected, $result);
     }
 
@@ -951,8 +952,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_checks_if_key_is_empty(array $array, string $key, bool $expected): void
     {
-        $closure = $this->arrMixin->isEmpty();
-        $result = $closure($array, $key);
+        $result = Arr::isEmpty($array, $key);
         $this->assertSame($expected, $result);
     }
 
@@ -960,8 +960,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_string_with_default(array $array, string $key, string $default, string $expected): void
     {
-        $closure = $this->arrMixin->string();
-        $result = $closure($array, $key, $default);
+        $result = Arr::toString($array, $key, $default);
         $this->assertSame($expected, $result);
     }
 
@@ -969,8 +968,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_string_or_null(array $array, string $key, ?string $expected): void
     {
-        $closure = $this->arrMixin->stringOrNull();
-        $result = $closure($array, $key);
+        $result = Arr::toStringOrNull($array, $key);
         $this->assertSame($expected, $result);
     }
 
@@ -978,8 +976,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_integer_with_default(array $array, string $key, int $default, int $expected): void
     {
-        $closure = $this->arrMixin->integer();
-        $result = $closure($array, $key, $default);
+        $result = Arr::toInteger($array, $key, $default);
         $this->assertSame($expected, $result);
     }
 
@@ -987,8 +984,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_integer_or_null(array $array, string $key, ?int $expected): void
     {
-        $closure = $this->arrMixin->integerOrNull();
-        $result = $closure($array, $key);
+        $result = Arr::toIntegerOrNull($array, $key);
         $this->assertSame($expected, $result);
     }
 
@@ -996,8 +992,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_float_with_default(array $array, string $key, float $default, float $expected): void
     {
-        $closure = $this->arrMixin->float();
-        $result = $closure($array, $key, $default);
+        $result = Arr::toFloat($array, $key, $default);
         $this->assertEqualsWithDelta($expected, $result, 0.00001); // Use delta for float comparison
     }
 
@@ -1005,8 +1000,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_float_or_null(array $array, string $key, ?float $expected): void
     {
-        $closure = $this->arrMixin->floatOrNull();
-        $result = $closure($array, $key);
+        $result = Arr::toFloatOrNull($array, $key);
 
         if ($expected === null) {
             $this->assertNull($result);
@@ -1019,15 +1013,13 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_boolean_with_default(array $array, string $key, bool $default, bool $expected): void
     {
-        $closure = $this->arrMixin->boolean();
-        $result = $closure($array, $key, $default);
+        $result = Arr::toBoolean($array, $key, $default);
         $this->assertSame($expected, $result);
     }
 
     #[Test]
     public function it_can_get_a_value_as_stringable_with_default(): void
     {
-        $closure = $this->arrMixin->stringable();
 
         $array = [
             'key1' => 'Hello',
@@ -1036,21 +1028,19 @@ final class ArrMixinTest extends TestCase
             'key4' => false,
         ];
 
-        $this->assertSame('Hello', (string) $closure($array, 'key1', new Stringable('Default')));
-        $this->assertInstanceOf(Stringable::class, $closure($array, 'key1', new Stringable('Default')));
-        $this->assertSame('123', (string) $closure($array, 'key2', new Stringable('Default')));
-        $this->assertSame('Default', (string) $closure($array, 'key3', new Stringable('Default')));
-        $this->assertSame('', (string) $closure($array, 'key4', new Stringable('Default')));
-        $this->assertSame('Default', (string) $closure($array, 'key5', new Stringable('Default')));
-        $this->assertSame('Default', (string) $closure($array, 'key5', 'Default'));
-        $this->assertInstanceOf(Stringable::class, $closure($array, 'key5', 'Default'));
+        $this->assertSame('Hello', (string) Arr::toStringable($array, 'key1', new Stringable('Default')));
+        $this->assertInstanceOf(Stringable::class, Arr::toStringable($array, 'key1', new Stringable('Default')));
+        $this->assertSame('123', (string) Arr::toStringable($array, 'key2', new Stringable('Default')));
+        $this->assertSame('Default', (string) Arr::toStringable($array, 'key3', new Stringable('Default')));
+        $this->assertSame('', (string) Arr::toStringable($array, 'key4', new Stringable('Default')));
+        $this->assertSame('Default', (string) Arr::toStringable($array, 'key5', new Stringable('Default')));
+        $this->assertSame('Default', (string) Arr::toStringable($array, 'key5', 'Default'));
+        $this->assertInstanceOf(Stringable::class, Arr::toStringable($array, 'key5', 'Default'));
     }
 
     #[Test]
     public function it_can_get_a_value_as_stringable_or_null(): void
     {
-        $closure = $this->arrMixin->stringableOrNull();
-
         $array = [
             'key1' => 'World',      // Existing string
             'key2' => 456,          // Numeric (integer)
@@ -1061,22 +1051,21 @@ final class ArrMixinTest extends TestCase
             'key7' => ['key' => 'value'], // Array
         ];
 
-        $this->assertSame('World', (string) $closure($array, 'key1')); // String remains unchanged
-        $this->assertSame('456', (string) $closure($array, 'key2'));  // Integer converted to string
-        $this->assertNull($closure($array, 'key3'));                 // Null remains null
-        $this->assertSame('', (string) $closure($array, 'key4'));    // Boolean false converted to empty string
-        $this->assertSame('1', (string) $closure($array, 'key5'));   // Boolean true converted to '1'
-        $this->assertSame('12.34', (string) $closure($array, 'key6')); // Float converted to string
-        $this->assertSame('{"key":"value"}', (string) $closure($array, 'key7'));                 // Non-scalar (array) returns null
-        $this->assertNull($closure($array, 'key8'));                 // Missing key returns null
+        $this->assertSame('World', (string) Arr::toStringableOrNull($array, 'key1')); // String remains unchanged
+        $this->assertSame('456', (string) Arr::toStringableOrNull($array, 'key2'));  // Integer converted to string
+        $this->assertNull(Arr::toStringableOrNull($array, 'key3'));                 // Null remains null
+        $this->assertSame('', (string) Arr::toStringableOrNull($array, 'key4'));    // Boolean false converted to empty string
+        $this->assertSame('1', (string) Arr::toStringableOrNull($array, 'key5'));   // Boolean true converted to '1'
+        $this->assertSame('12.34', (string) Arr::toStringableOrNull($array, 'key6')); // Float converted to string
+        $this->assertSame('{"key":"value"}', (string) Arr::toStringableOrNull($array, 'key7'));                 // Non-scalar (array) returns null
+        $this->assertNull(Arr::toStringableOrNull($array, 'key8'));                 // Missing key returns null
     }
 
     #[DataProvider('booleanOrNullProvider')]
     #[Test]
     public function it_can_get_a_value_as_boolean_or_null(array $array, string $key, ?bool $expected): void
     {
-        $closure = $this->arrMixin->booleanOrNull();
-        $result = $closure($array, $key);
+        $result = Arr::toBooleanOrNull($array, $key);
         $this->assertSame($expected, $result);
     }
 
@@ -1084,8 +1073,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_date_with_default(array $array, string $key, mixed $default, string $expectedDateString): void
     {
-        $closure = $this->arrMixin->date();
-        $result = $closure($array, $key, $default);
+        $result = Arr::toDate($array, $key, $default);
 
         $this->assertInstanceOf(CarbonImmutable::class, $result);
         // Compare date part only, as time should be zeroed
@@ -1096,8 +1084,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_date_or_null(array $array, string $key, ?string $expectedDateString): void
     {
-        $closure = $this->arrMixin->dateOrNull();
-        $result = $closure($array, $key);
+        $result = Arr::toDateOrNull($array, $key);
 
         if ($expectedDateString === null) {
             $this->assertNull($result);
@@ -1111,11 +1098,10 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_datetime_with_default(array $array, string $key, mixed $default, CarbonInterface $expectedDateTime): void
     {
-        $closure = $this->arrMixin->dateTime();
-        $result = $closure($array, $key, $default);
+        $result = Arr::toDateTime($array, $key, $default);
 
         $this->assertInstanceOf(CarbonInterface::class, $result);
-        // Compare using assertEquals for Carbon instances (checks value)
+        // Compare using assertEquals for Carbon instances (it checks the value)
         $this->assertEquals($expectedDateTime, $result);
     }
 
@@ -1123,8 +1109,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_datetime_or_null(array $array, string $key, ?CarbonInterface $expectedDateTime): void
     {
-        $closure = $this->arrMixin->dateTimeOrNull();
-        $result = $closure($array, $key);
+        $result = Arr::toDateTimeOrNull($array, $key);
 
         if (! $expectedDateTime instanceof CarbonInterface) {
             $this->assertNull($result);
@@ -1138,8 +1123,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_array_with_default(array $array, string $key, array $default, array $expected): void
     {
-        $closure = $this->arrMixin->array();
-        $result = $closure($array, $key, $default);
+        $result = Arr::toArray($array, $key, $default);
         $this->assertSame($expected, $result);
     }
 
@@ -1147,8 +1131,7 @@ final class ArrMixinTest extends TestCase
     #[Test]
     public function it_can_get_a_value_as_array_or_null(array $array, string $key, ?array $expected): void
     {
-        $closure = $this->arrMixin->arrayOrNull();
-        $result = $closure($array, $key);
+        $result = Arr::toArrayOrNull($array, $key);
         $this->assertSame($expected, $result);
     }
 
@@ -1160,8 +1143,7 @@ final class ArrMixinTest extends TestCase
         Collection|array $default,
         Collection $expected
     ): void {
-        $closure = $this->arrMixin->collection();
-        $result = $closure($array, $key, $default);
+        $result = Arr::toCollection($array, $key, $default);
 
         $this->assertInstanceOf(Collection::class, $result);
         $this->assertEquals($expected, $result);
@@ -1174,8 +1156,7 @@ final class ArrMixinTest extends TestCase
         string $key,
         ?Collection $expected
     ): void {
-        $closure = $this->arrMixin->collectionOrNull();
-        $result = $closure($array, $key);
+        $result = Arr::toCollectionOrNull($array, $key);
 
         if (! $expected instanceof Collection) {
             $this->assertNull($result);
@@ -1183,179 +1164,5 @@ final class ArrMixinTest extends TestCase
             $this->assertInstanceOf(Collection::class, $result);
             $this->assertEquals($expected, $result);
         }
-    }
-
-    #[Test]
-    public function it_can_use_to_string_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toString();
-        $this->assertSame('test', $method(['key' => 'test'], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_string_or_null_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toStringOrNull();
-        $this->assertSame('test', $method(['key' => 'test'], 'key'));
-        $this->assertNull($method(['key' => null], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_stringable_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toStringable();
-        $result = $method(['key' => 'test'], 'key');
-        $this->assertInstanceOf(Stringable::class, $result);
-        $this->assertSame('test', (string) $result);
-    }
-
-    #[Test]
-    public function it_can_use_to_stringable_or_null_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toStringableOrNull();
-        $result = $method(['key' => 'test'], 'key');
-        $this->assertInstanceOf(Stringable::class, $result);
-        $this->assertSame('test', (string) $result);
-        $this->assertNull($method(['key' => null], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_integer_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toInteger();
-        $this->assertSame(123, $method(['key' => '123'], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_integer_or_null_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toIntegerOrNull();
-        $this->assertSame(123, $method(['key' => '123'], 'key'));
-        $this->assertNull($method(['key' => null], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_float_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toFloat();
-        $this->assertSame(123.45, $method(['key' => '123.45'], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_float_or_null_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toFloatOrNull();
-        $this->assertSame(123.45, $method(['key' => '123.45'], 'key'));
-        $this->assertNull($method(['key' => null], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_boolean_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toBoolean();
-        $this->assertTrue($method(['key' => 'true'], 'key'));
-        $this->assertFalse($method(['key' => 'false'], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_boolean_or_null_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toBooleanOrNull();
-        $this->assertTrue($method(['key' => 'true'], 'key'));
-        $this->assertFalse($method(['key' => 'false'], 'key'));
-        $this->assertNull($method(['key' => null], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_date_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toDate();
-        $result = $method(['key' => '2024-03-14'], 'key');
-        $this->assertSame('2024-03-14', $result->format('Y-m-d'));
-    }
-
-    #[Test]
-    public function it_can_use_to_date_or_null_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toDateOrNull();
-        $result = $method(['key' => '2024-03-14'], 'key');
-        $this->assertSame('2024-03-14', $result->format('Y-m-d'));
-        $this->assertNull($method(['key' => null], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_date_time_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toDateTime();
-        $result = $method(['key' => '2024-03-14 15:30:00'], 'key');
-        $this->assertSame('2024-03-14 15:30:00', $result->format('Y-m-d H:i:s'));
-    }
-
-    #[Test]
-    public function it_can_use_to_date_time_or_null_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toDateTimeOrNull();
-        $result = $method(['key' => '2024-03-14 15:30:00'], 'key');
-        $this->assertSame('2024-03-14 15:30:00', $result->format('Y-m-d H:i:s'));
-        $this->assertNull($method(['key' => null], 'key'));
-    }
-
-    #[Test]
-    public function it_can_use_to_array_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toArray();
-        $result = $method(['key' => ['nested' => 'value']], 'key');
-        $this->assertSame(['nested' => 'value'], $result);
-    }
-
-    #[Test]
-    public function it_can_use_to_array_or_null_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toArrayOrNull();
-        $result1 = $method(['key' => ['nested' => 'value']], 'key');
-        $this->assertSame(['nested' => 'value'], $result1);
-        $result2 = $method(['key' => null], 'key');
-        $this->assertNull($result2);
-    }
-
-    #[Test]
-    public function it_can_use_to_collection_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toCollection();
-        $result = $method(['key' => ['nested' => 'value']], 'key');
-
-        $this->assertInstanceOf(Collection::class, $result);
-        $this->assertEquals(new Collection(['nested' => 'value']), $result);
-    }
-
-    #[Test]
-    public function it_can_use_to_collection_or_null_alias(): void
-    {
-        $mixin = new ArrMixin();
-        $method = $mixin->toCollectionOrNull();
-
-        $result1 = $method(['key' => ['nested' => 'value']], 'key');
-        $this->assertInstanceOf(Collection::class, $result1);
-        $this->assertEquals(new Collection(['nested' => 'value']), $result1);
-
-        $result2 = $method(['key' => null], 'key');
-        $this->assertNull($result2);
     }
 }
