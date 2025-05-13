@@ -23,8 +23,16 @@ final class ArrMixin
 {
     public function tryKeys(): Closure
     {
-        return function (array $array, string ...$keys) {
-            foreach ($keys as $key) {
+        return function (array $array, string|array|null $keys = null, string ...$additionalKeys): mixed {
+            if ($keys === null) {
+                $keys = (array) null;
+            }
+
+            // If the first argument is an array, use it as the keys
+            // Otherwise, combine the first key with any additional keys
+            $keysToTry = is_array($keys) ? $keys : array_merge([$keys], $additionalKeys);
+
+            foreach ($keysToTry as $key) {
                 $value = Arr::get($array, $key);
                 if ($value !== null) {
                     return $value;
