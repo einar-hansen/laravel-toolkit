@@ -81,7 +81,7 @@ final class ArrMixin
 
     public function toString(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, string $default = ''): string {
+        return function (ArrayAccess|array $array, string|int|null $key, string $default = '', bool $emptyStringAsNull = false): string {
             $value = Arr::get($array, $key, $default);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -89,7 +89,13 @@ final class ArrMixin
                     $value = json_encode($value);
                 }
 
-                return is_string($value) ? $value : (string) $value;
+                $stringValue = is_string($value) ? $value : (string) $value;
+
+                if ($emptyStringAsNull && $stringValue === '') {
+                    return $default;
+                }
+
+                return $stringValue;
             }
 
             return $default;
@@ -99,7 +105,7 @@ final class ArrMixin
 
     public function toStringOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key): ?string {
+        return function (ArrayAccess|array $array, string|int|null $key, bool $emptyStringAsNull = false): ?string {
             $value = Arr::get($array, $key);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -107,7 +113,13 @@ final class ArrMixin
                     $value = json_encode($value);
                 }
 
-                return is_string($value) ? $value : (string) $value;
+                $stringValue = is_string($value) ? $value : (string) $value;
+
+                if ($emptyStringAsNull && $stringValue === '') {
+                    return null;
+                }
+
+                return $stringValue;
             }
 
             return null;
@@ -116,7 +128,7 @@ final class ArrMixin
 
     public function toStringable(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = ''): Stringable {
+        return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = '', bool $emptyStringAsNull = false): Stringable {
             $value = Arr::get($array, $key, $default);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -124,7 +136,13 @@ final class ArrMixin
                     $value = json_encode($value);
                 }
 
-                return new Stringable(is_string($value) ? $value : (string) $value);
+                $stringValue = is_string($value) ? $value : (string) $value;
+
+                if ($emptyStringAsNull && $stringValue === '') {
+                    return new Stringable($default);
+                }
+
+                return new Stringable($stringValue);
             }
 
             return new Stringable($default);
@@ -134,7 +152,7 @@ final class ArrMixin
 
     public function toStringableOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key): ?Stringable {
+        return function (ArrayAccess|array $array, string|int|null $key, bool $emptyStringAsNull = false): ?Stringable {
             $value = Arr::get($array, $key);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -142,7 +160,13 @@ final class ArrMixin
                     $value = json_encode($value);
                 }
 
-                return new Stringable(is_string($value) ? $value : (string) $value);
+                $stringValue = is_string($value) ? $value : (string) $value;
+
+                if ($emptyStringAsNull && $stringValue === '') {
+                    return null;
+                }
+
+                return new Stringable($stringValue);
             }
 
             return null;
