@@ -175,7 +175,7 @@ final class ArrMixin
 
     public function toArray(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key, array $default = []): array {
+        return static function (ArrayAccess|array $source, string|int|null $key, array $default = [], bool $emptyArrayAsNull = false): array {
             $value = Arr::get($source, $key);
 
             if ($value === null) {
@@ -183,6 +183,9 @@ final class ArrMixin
             }
 
             if (is_array($value)) {
+                if ($emptyArrayAsNull && empty($value)) {
+                    return $default;
+                }
                 return $value;
             }
 
@@ -216,7 +219,7 @@ final class ArrMixin
 
     public function toArrayOrNull(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key): ?array {
+        return static function (ArrayAccess|array $source, string|int|null $key, bool $emptyArrayAsNull = false): ?array {
             $value = Arr::get($source, $key);
 
             if ($value === null) {
@@ -224,6 +227,9 @@ final class ArrMixin
             }
 
             if (is_array($value)) {
+                if ($emptyArrayAsNull && empty($value)) {
+                    return null;
+                }
                 return $value;
             }
 
@@ -257,9 +263,9 @@ final class ArrMixin
 
     public function toCollection(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key, Collection|array $default = new Collection): Collection {
+        return static function (ArrayAccess|array $source, string|int|null $key, Collection|array $default = new Collection, bool $emptyArrayAsNull = false): Collection {
             $method = new ArrMixin()->toArrayOrNull();
-            $array = $method($source, $key);
+            $array = $method($source, $key, $emptyArrayAsNull);
 
             if ($array === null) {
                 return $default instanceof Collection ? $default : new Collection($default);
@@ -271,9 +277,9 @@ final class ArrMixin
 
     public function toCollectionOrNull(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key): ?Collection {
+        return static function (ArrayAccess|array $source, string|int|null $key, bool $emptyArrayAsNull = false): ?Collection {
             $method = new ArrMixin()->toArrayOrNull();
-            $array = $method($source, $key);
+            $array = $method($source, $key, $emptyArrayAsNull);
 
             if ($array === null) {
                 return null;
