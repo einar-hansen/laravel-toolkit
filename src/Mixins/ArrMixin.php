@@ -183,9 +183,10 @@ final class ArrMixin
             }
 
             if (is_array($value)) {
-                if ($emptyArrayAsNull && empty($value)) {
+                if ($emptyArrayAsNull && $value === []) {
                     return $default;
                 }
+
                 return $value;
             }
 
@@ -227,9 +228,10 @@ final class ArrMixin
             }
 
             if (is_array($value)) {
-                if ($emptyArrayAsNull && empty($value)) {
+                if ($emptyArrayAsNull && $value === []) {
                     return null;
                 }
+
                 return $value;
             }
 

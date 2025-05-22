@@ -987,7 +987,7 @@ final class ArrMixinTest extends TestCase
     }
 
     #[Test]
-    public function it_can_treat_empty_string_as_null_in_toString(): void
+    public function it_can_treat_empty_string_as_null_in_to_string(): void
     {
         $array = [
             'empty_string' => '',
@@ -1017,7 +1017,7 @@ final class ArrMixinTest extends TestCase
     }
 
     #[Test]
-    public function it_can_treat_empty_string_as_null_in_toStringOrNull(): void
+    public function it_can_treat_empty_string_as_null_in_to_string_or_null(): void
     {
         $array = [
             'empty_string' => '',
@@ -1105,7 +1105,7 @@ final class ArrMixinTest extends TestCase
     }
 
     #[Test]
-    public function it_can_treat_empty_string_as_null_in_toStringable(): void
+    public function it_can_treat_empty_string_as_null_in_to_stringable(): void
     {
         $array = [
             'empty_string' => '',
@@ -1150,7 +1150,7 @@ final class ArrMixinTest extends TestCase
     }
 
     #[Test]
-    public function it_can_treat_empty_string_as_null_in_toStringableOrNull(): void
+    public function it_can_treat_empty_string_as_null_in_to_stringable_or_null(): void
     {
         $array = [
             'empty_string' => '',
@@ -1238,7 +1238,7 @@ final class ArrMixinTest extends TestCase
     }
 
     #[Test]
-    public function it_can_treat_empty_array_as_null_in_toArray(): void
+    public function it_can_treat_empty_array_as_null_in_to_array(): void
     {
         $array = [
             'empty_array' => [],
@@ -1269,7 +1269,7 @@ final class ArrMixinTest extends TestCase
     }
 
     #[Test]
-    public function it_can_treat_empty_array_as_null_in_toArrayOrNull(): void
+    public function it_can_treat_empty_array_as_null_in_to_array_or_null(): void
     {
         $array = [
             'empty_array' => [],
@@ -1305,7 +1305,7 @@ final class ArrMixinTest extends TestCase
     }
 
     #[Test]
-    public function it_can_treat_empty_array_as_null_in_toCollection(): void
+    public function it_can_treat_empty_array_as_null_in_to_collection(): void
     {
         $array = [
             'empty_array' => [],
@@ -1353,7 +1353,7 @@ final class ArrMixinTest extends TestCase
     }
 
     #[Test]
-    public function it_can_treat_empty_array_as_null_in_toCollectionOrNull(): void
+    public function it_can_treat_empty_array_as_null_in_to_collection_or_null(): void
     {
         $array = [
             'empty_array' => [],
