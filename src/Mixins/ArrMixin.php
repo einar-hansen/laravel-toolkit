@@ -97,7 +97,7 @@ final class ArrMixin
                     $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
                 }
 
-                if ($emptyAsDefault && empty($stringValue)) {
+                if ($emptyAsDefault && ($stringValue === '' || $stringValue === '0')) {
                     return $default;
                 }
 
@@ -125,7 +125,7 @@ final class ArrMixin
                     $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
                 }
 
-                if ($emptyAsNull && empty($stringValue)) {
+                if ($emptyAsNull && ($stringValue === '' || $stringValue === '0')) {
                     return null;
                 }
 
@@ -153,7 +153,7 @@ final class ArrMixin
                     $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
                 }
 
-                if ($emptyAsDefault && empty($stringValue)) {
+                if ($emptyAsDefault && ($stringValue === '' || $stringValue === '0')) {
                     return new Stringable($default);
                 }
 
@@ -181,7 +181,7 @@ final class ArrMixin
                     $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
                 }
 
-                if ($emptyAsNull && empty($stringValue)) {
+                if ($emptyAsNull && ($stringValue === '' || $stringValue === '0')) {
                     return null;
                 }
 
@@ -207,7 +207,7 @@ final class ArrMixin
             }
 
             if (is_array($value)) {
-                if ($emptyAsDefault && empty($value)) {
+                if ($emptyAsDefault && $value === []) {
                     return $default;
                 }
 
@@ -261,7 +261,7 @@ final class ArrMixin
             }
 
             if (is_array($value)) {
-                if ($emptyAsNull && empty($value)) {
+                if ($emptyAsNull && $value === []) {
                     return null;
                 }
 
@@ -330,7 +330,7 @@ final class ArrMixin
 
     public function toInteger(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, int $default = 0, ?bool $emptyAsDefault = null): int {
+        return function (ArrayAccess|array $array, string|int|null $key, int $default = 0): int {
             $value = Arr::get($array, $key, $default);
             if ($value === null) {
                 return $default;
@@ -342,15 +342,6 @@ final class ArrMixin
 
             if (is_numeric($value)) {
                 return (int) $value;
-            }
-
-            // If $emptyAsDefault is null, use default value (false)
-            if ($emptyAsDefault === null) {
-                $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
-            }
-
-            if ($emptyAsDefault && empty($value)) {
-                return $default;
             }
 
             return $default;
@@ -359,7 +350,7 @@ final class ArrMixin
 
     public function toIntegerOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, ?bool $emptyAsNull = null): ?int {
+        return function (ArrayAccess|array $array, string|int|null $key): ?int {
             $value = Arr::get($array, $key);
 
             if (is_bool($value)) {
@@ -368,15 +359,6 @@ final class ArrMixin
 
             if (is_numeric($value)) {
                 return (int) $value;
-            }
-
-            // If $emptyAsNull is null, use default value (false)
-            if ($emptyAsNull === null) {
-                $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
-            }
-
-            if ($emptyAsNull && empty($value)) {
-                return null;
             }
 
             return null;
@@ -385,7 +367,7 @@ final class ArrMixin
 
     public function toFloat(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, float $default = 0.0, ?bool $emptyAsDefault = null): float {
+        return function (ArrayAccess|array $array, string|int|null $key, float $default = 0.0): float {
             $value = Arr::get($array, $key, $default);
             if ($value === null) {
                 return $default;
@@ -396,16 +378,7 @@ final class ArrMixin
             }
 
             if (is_numeric($value)) {
-                return (int) $value;
-            }
-
-            // If $emptyAsDefault is null, use default value (false)
-            if ($emptyAsDefault === null) {
-                $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
-            }
-
-            if ($emptyAsDefault && empty($value)) {
-                return $default;
+                return (float) $value;
             }
 
             return $default;
@@ -414,7 +387,7 @@ final class ArrMixin
 
     public function toFloatOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, ?bool $emptyAsNull = null): ?float {
+        return function (ArrayAccess|array $array, string|int|null $key): ?float {
             $value = Arr::get($array, $key);
 
             if (is_bool($value)) {
@@ -422,16 +395,7 @@ final class ArrMixin
             }
 
             if (is_numeric($value)) {
-                return (int) $value;
-            }
-
-            // If $emptyAsNull is null, use default value (false)
-            if ($emptyAsNull === null) {
-                $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
-            }
-
-            if ($emptyAsNull && empty($value)) {
-                return null;
+                return (float) $value;
             }
 
             return null;
@@ -440,7 +404,7 @@ final class ArrMixin
 
     public function toBoolean(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, bool $default = false, ?bool $emptyAsDefault = null): bool {
+        return function (ArrayAccess|array $array, string|int|null $key, bool $default = false): bool {
             $value = Arr::get($array, $key, $default);
 
             if ($value === null) {
@@ -469,22 +433,13 @@ final class ArrMixin
                 return (bool) $value;
             }
 
-            // If $emptyAsNull is null, use default value (false)
-            if ($emptyAsDefault === null) {
-                $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
-            }
-
-            if ($emptyAsDefault && empty($value)) {
-                return $default;
-            }
-
             return $default;
         };
     }
 
     public function toBooleanOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, ?bool $emptyAsNull = null): ?bool {
+        return function (ArrayAccess|array $array, string|int|null $key): ?bool {
             $value = Arr::get($array, $key);
 
             if ($value === null) {
@@ -511,15 +466,6 @@ final class ArrMixin
 
             if (is_numeric($value)) {
                 return (bool) $value;
-            }
-
-            // If $emptyAsNull is null, use default value (false)
-            if ($emptyAsNull === null) {
-                $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
-            }
-
-            if ($emptyAsNull && empty($value)) {
-                return null;
             }
 
             return null;
