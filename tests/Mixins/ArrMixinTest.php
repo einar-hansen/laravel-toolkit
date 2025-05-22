@@ -932,6 +932,28 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
+    public static function wrapListProvider(): array
+    {
+        return [
+            'null value' => [null, []],
+            'empty array' => [[], []],
+            'numeric array' => [[1, 2, 3], [1, 2, 3]],
+            'associative array' => [['name' => 'John', 'age' => 30], [['name' => 'John', 'age' => 30]]],
+            'mixed array' => [[1, 2, 'name' => 'John'], [[1, 2, 'name' => 'John']]], // Laravel considers this associative
+            'string value' => ['test', ['test']],
+            'integer value' => [123, [123]],
+            'boolean value' => [true, [true]],
+            'nested associative array' => [
+                ['user' => ['name' => 'John', 'age' => 30]], 
+                [['user' => ['name' => 'John', 'age' => 30]]]
+            ],
+            'array of associative arrays' => [
+                [['name' => 'John'], ['name' => 'Jane']], 
+                [['name' => 'John'], ['name' => 'Jane']]
+            ],
+        ];
+    }
+
     #[DataProvider('tryKeysProvider')]
     #[Test]
     public function it_can_try_multiple_keys_and_return_first_found(array $array, array $keys, mixed $expected): void
@@ -1164,5 +1186,13 @@ final class ArrMixinTest extends TestCase
             $this->assertInstanceOf(Collection::class, $result);
             $this->assertEquals($expected, $result);
         }
+    }
+
+    #[DataProvider('wrapListProvider')]
+    #[Test]
+    public function it_can_wrap_value_in_list_if_associative(mixed $value, array $expected): void
+    {
+        $result = Arr::wrapList($value);
+        $this->assertSame($expected, $result);
     }
 }
