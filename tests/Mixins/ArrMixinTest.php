@@ -944,12 +944,12 @@ final class ArrMixinTest extends TestCase
             'integer value' => [123, [123]],
             'boolean value' => [true, [true]],
             'nested associative array' => [
-                ['user' => ['name' => 'John', 'age' => 30]], 
-                [['user' => ['name' => 'John', 'age' => 30]]]
+                ['user' => ['name' => 'John', 'age' => 30]],
+                [['user' => ['name' => 'John', 'age' => 30]]],
             ],
             'array of associative arrays' => [
-                [['name' => 'John'], ['name' => 'Jane']], 
-                [['name' => 'John'], ['name' => 'Jane']]
+                [['name' => 'John'], ['name' => 'Jane']],
+                [['name' => 'John'], ['name' => 'Jane']],
             ],
         ];
     }
