@@ -15,10 +15,11 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
 use JsonSerializable;
+use Orchestra\Testbench\TestCase;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Stringable as StringableContract;
 
 #[CoversClass(ArrMixin::class)]
@@ -28,6 +29,7 @@ final class ArrMixinTest extends TestCase
 
     private CarbonImmutable $knownDate;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,6 +41,7 @@ final class ArrMixinTest extends TestCase
 
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         // Reset the 'now' instance

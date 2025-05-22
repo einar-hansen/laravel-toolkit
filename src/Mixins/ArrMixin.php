@@ -15,6 +15,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Stringable;
 use JsonSerializable;
 use Stringable as StringableContract;
@@ -81,7 +82,7 @@ final class ArrMixin
 
     public function toString(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, string $default = '', bool $emptyStringAsNull = false): string {
+        return function (ArrayAccess|array $array, string|int|null $key, string $default = '', ?bool $emptyAsDefault = null): string {
             $value = Arr::get($array, $key, $default);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -91,7 +92,12 @@ final class ArrMixin
 
                 $stringValue = is_string($value) ? $value : (string) $value;
 
-                if ($emptyStringAsNull && $stringValue === '') {
+                // If $emptyStringAsNull is null, use default value (false)
+                if ($emptyAsDefault === null) {
+                    $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
+                }
+
+                if ($emptyAsDefault && ($stringValue === '' || $stringValue === '0')) {
                     return $default;
                 }
 
@@ -99,13 +105,12 @@ final class ArrMixin
             }
 
             return $default;
-
         };
     }
 
     public function toStringOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, bool $emptyStringAsNull = false): ?string {
+        return function (ArrayAccess|array $array, string|int|null $key, ?bool $emptyAsNull = null): ?string {
             $value = Arr::get($array, $key);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -115,7 +120,12 @@ final class ArrMixin
 
                 $stringValue = is_string($value) ? $value : (string) $value;
 
-                if ($emptyStringAsNull && $stringValue === '') {
+                // If $emptyStringAsNull is null, use default value (false)
+                if ($emptyAsNull === null) {
+                    $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
+                }
+
+                if ($emptyAsNull && ($stringValue === '' || $stringValue === '0')) {
                     return null;
                 }
 
@@ -128,7 +138,7 @@ final class ArrMixin
 
     public function toStringable(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = '', bool $emptyStringAsNull = false): Stringable {
+        return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = '', ?bool $emptyAsDefault = null): Stringable {
             $value = Arr::get($array, $key, $default);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -138,7 +148,12 @@ final class ArrMixin
 
                 $stringValue = is_string($value) ? $value : (string) $value;
 
-                if ($emptyStringAsNull && $stringValue === '') {
+                // If $emptyAsDefault is null, use default value (false)
+                if ($emptyAsDefault === null) {
+                    $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
+                }
+
+                if ($emptyAsDefault && ($stringValue === '' || $stringValue === '0')) {
                     return new Stringable($default);
                 }
 
@@ -146,13 +161,12 @@ final class ArrMixin
             }
 
             return new Stringable($default);
-
         };
     }
 
     public function toStringableOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, bool $emptyStringAsNull = false): ?Stringable {
+        return function (ArrayAccess|array $array, string|int|null $key, ?bool $emptyAsNull = null): ?Stringable {
             $value = Arr::get($array, $key);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -162,7 +176,12 @@ final class ArrMixin
 
                 $stringValue = is_string($value) ? $value : (string) $value;
 
-                if ($emptyStringAsNull && $stringValue === '') {
+                // If $emptyAsNull is null, use default value (false)
+                if ($emptyAsNull === null) {
+                    $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
+                }
+
+                if ($emptyAsNull && ($stringValue === '' || $stringValue === '0')) {
                     return null;
                 }
 
@@ -175,15 +194,20 @@ final class ArrMixin
 
     public function toArray(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key, array $default = [], bool $emptyArrayAsNull = false): array {
+        return static function (ArrayAccess|array $source, string|int|null $key, array $default = [], ?bool $emptyAsDefault = null): array {
             $value = Arr::get($source, $key);
 
             if ($value === null) {
                 return $default;
             }
 
+            // If $emptyAsDefault is null, use default value (false)
+            if ($emptyAsDefault === null) {
+                $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
+            }
+
             if (is_array($value)) {
-                if ($emptyArrayAsNull && $value === []) {
+                if ($emptyAsDefault && $value === []) {
                     return $default;
                 }
 
@@ -213,6 +237,10 @@ final class ArrMixin
                 return json_decode($value, true);
             }
 
+            if ($emptyAsDefault && empty($value)) {
+                return $default;
+            }
+
             // For skalarer og andre objekttyper, bruk (array) type-casting.
             return (array) $value;
         };
@@ -220,15 +248,20 @@ final class ArrMixin
 
     public function toArrayOrNull(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key, bool $emptyArrayAsNull = false): ?array {
+        return static function (ArrayAccess|array $source, string|int|null $key, ?bool $emptyAsNull = null): ?array {
             $value = Arr::get($source, $key);
 
             if ($value === null) {
                 return null;
             }
 
+            // If $emptyAsNull is null, use default value (false)
+            if ($emptyAsNull === null) {
+                $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
+            }
+
             if (is_array($value)) {
-                if ($emptyArrayAsNull && $value === []) {
+                if ($emptyAsNull && $value === []) {
                     return null;
                 }
 
@@ -258,6 +291,10 @@ final class ArrMixin
                 return json_decode($value, true);
             }
 
+            if ($emptyAsNull && empty($value)) {
+                return null;
+            }
+
             // For skalarer og andre objekttyper, bruk (array) type-casting.
             return (array) $value;
         };
@@ -265,9 +302,9 @@ final class ArrMixin
 
     public function toCollection(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key, Collection|array $default = new Collection, bool $emptyArrayAsNull = false): Collection {
+        return static function (ArrayAccess|array $source, string|int|null $key, Collection|array $default = new Collection, ?bool $emptyAsDefault = null): Collection {
             $method = new ArrMixin()->toArrayOrNull();
-            $array = $method($source, $key, $emptyArrayAsNull);
+            $array = $method($source, $key, $emptyAsDefault);
 
             if ($array === null) {
                 return $default instanceof Collection ? $default : new Collection($default);
@@ -279,9 +316,9 @@ final class ArrMixin
 
     public function toCollectionOrNull(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key, bool $emptyArrayAsNull = false): ?Collection {
+        return static function (ArrayAccess|array $source, string|int|null $key, ?bool $emptyAsNull = null): ?Collection {
             $method = new ArrMixin()->toArrayOrNull();
-            $array = $method($source, $key, $emptyArrayAsNull);
+            $array = $method($source, $key, $emptyAsNull);
 
             if ($array === null) {
                 return null;
@@ -303,7 +340,11 @@ final class ArrMixin
                 return $value ? 1 : 0;
             }
 
-            return is_numeric($value) ? (int) $value : $default;
+            if (is_numeric($value)) {
+                return (int) $value;
+            }
+
+            return $default;
         };
     }
 
@@ -311,11 +352,16 @@ final class ArrMixin
     {
         return function (ArrayAccess|array $array, string|int|null $key): ?int {
             $value = Arr::get($array, $key);
+
             if (is_bool($value)) {
                 return $value ? 1 : 0;
             }
 
-            return $value === null ? null : (is_numeric($value) ? (int) $value : null);
+            if (is_numeric($value)) {
+                return (int) $value;
+            }
+
+            return null;
         };
     }
 
@@ -331,7 +377,11 @@ final class ArrMixin
                 return $value ? 1 : 0;
             }
 
-            return is_numeric($value) ? (float) $value : $default;
+            if (is_numeric($value)) {
+                return (float) $value;
+            }
+
+            return $default;
         };
     }
 
@@ -339,11 +389,16 @@ final class ArrMixin
     {
         return function (ArrayAccess|array $array, string|int|null $key): ?float {
             $value = Arr::get($array, $key);
+
             if (is_bool($value)) {
                 return $value ? 1 : 0;
             }
 
-            return $value === null ? null : (is_numeric($value) ? (float) $value : null);
+            if (is_numeric($value)) {
+                return (float) $value;
+            }
+
+            return null;
         };
     }
 
@@ -419,10 +474,15 @@ final class ArrMixin
 
     public function toDate(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, $default = null): CarbonImmutable {
+        return function (ArrayAccess|array $array, string|int|null $key, $default = null, ?bool $emptyAsDefault = null): CarbonImmutable {
             $value = Arr::get($array, $key);
 
-            if ($value === null) {
+            // If $emptyAsDefault is null, use default value (false)
+            if ($emptyAsDefault === null) {
+                $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
+            }
+
+            if ($value === null || ($emptyAsDefault && empty($value))) {
                 if ($default !== null) {
                     try {
                         return CarbonImmutable::parse($default)->startOfDay();
@@ -456,10 +516,15 @@ final class ArrMixin
 
     public function toDateOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key): ?CarbonImmutable {
+        return function (ArrayAccess|array $array, string|int|null $key, ?bool $emptyAsNull = null): ?CarbonImmutable {
             $value = Arr::get($array, $key);
 
-            if ($value === null) {
+            // If $emptyAsNull is null, use default value (false)
+            if ($emptyAsNull === null) {
+                $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
+            }
+
+            if ($value === null || ($emptyAsNull && empty($value))) {
                 return null;
             }
 
@@ -477,10 +542,15 @@ final class ArrMixin
 
     public function toDateTime(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, $default = null): CarbonInterface {
+        return function (ArrayAccess|array $array, string|int|null $key, $default = null, ?bool $emptyAsDefault = null): CarbonInterface {
             $value = Arr::get($array, $key);
 
-            if ($value === null) {
+            // If $emptyAsDefault is null, use default value (false)
+            if ($emptyAsDefault === null) {
+                $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
+            }
+
+            if ($value === null || ($emptyAsDefault && empty($value))) {
                 if ($default !== null) {
                     try {
                         return CarbonImmutable::parse($default);
@@ -515,10 +585,15 @@ final class ArrMixin
 
     public function toDateTimeOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key): ?CarbonInterface {
+        return function (ArrayAccess|array $array, string|int|null $key, ?bool $emptyAsNull = null): ?CarbonInterface {
             $value = Arr::get($array, $key);
 
-            if ($value === null) {
+            // If $emptyAsNull is null, use default value (false)
+            if ($emptyAsNull === null) {
+                $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
+            }
+
+            if ($value === null || ($emptyAsNull && empty($value))) {
                 return null;
             }
 

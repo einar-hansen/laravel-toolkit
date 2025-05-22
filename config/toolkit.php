@@ -33,4 +33,7 @@ return [
         'collection' => (bool) env('MIXIN_REGISTER_COLLECTION', true),
         'response' => (bool) env('MIXIN_REGISTER_RESPONSE', true),
     ],
+    'casting' => [
+        'empty_as_null' => (bool) env('CASTING_EMPTY_AS_NULL', false),
+    ],
 ];
