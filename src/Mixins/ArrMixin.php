@@ -501,4 +501,19 @@ final class ArrMixin
             }
         };
     }
+
+    /**
+     * Wrap the given value in a list collection if applicable.
+     */
+    public function wrapList(): Closure
+    {
+        return function (mixed $value): array {
+            $array = Arr::wrap($value);
+            if (Arr::isAssoc($array)) {
+                return [$array];
+            }
+
+            return $array;
+        };
+    }
 }
