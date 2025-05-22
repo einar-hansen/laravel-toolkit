@@ -81,7 +81,7 @@ final class ArrMixin
 
     public function toString(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, string $default = ''): string {
+        return function (ArrayAccess|array $array, string|int|null $key, string $default = '', bool $emptyStringAsNull = false): string {
             $value = Arr::get($array, $key, $default);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -89,7 +89,13 @@ final class ArrMixin
                     $value = json_encode($value);
                 }
 
-                return is_string($value) ? $value : (string) $value;
+                $stringValue = is_string($value) ? $value : (string) $value;
+
+                if ($emptyStringAsNull && $stringValue === '') {
+                    return $default;
+                }
+
+                return $stringValue;
             }
 
             return $default;
@@ -99,7 +105,7 @@ final class ArrMixin
 
     public function toStringOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key): ?string {
+        return function (ArrayAccess|array $array, string|int|null $key, bool $emptyStringAsNull = false): ?string {
             $value = Arr::get($array, $key);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -107,7 +113,13 @@ final class ArrMixin
                     $value = json_encode($value);
                 }
 
-                return is_string($value) ? $value : (string) $value;
+                $stringValue = is_string($value) ? $value : (string) $value;
+
+                if ($emptyStringAsNull && $stringValue === '') {
+                    return null;
+                }
+
+                return $stringValue;
             }
 
             return null;
@@ -116,7 +128,7 @@ final class ArrMixin
 
     public function toStringable(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = ''): Stringable {
+        return function (ArrayAccess|array $array, string|int|null $key, Stringable|string $default = '', bool $emptyStringAsNull = false): Stringable {
             $value = Arr::get($array, $key, $default);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -124,7 +136,13 @@ final class ArrMixin
                     $value = json_encode($value);
                 }
 
-                return new Stringable(is_string($value) ? $value : (string) $value);
+                $stringValue = is_string($value) ? $value : (string) $value;
+
+                if ($emptyStringAsNull && $stringValue === '') {
+                    return new Stringable($default);
+                }
+
+                return new Stringable($stringValue);
             }
 
             return new Stringable($default);
@@ -134,7 +152,7 @@ final class ArrMixin
 
     public function toStringableOrNull(): Closure
     {
-        return function (ArrayAccess|array $array, string|int|null $key): ?Stringable {
+        return function (ArrayAccess|array $array, string|int|null $key, bool $emptyStringAsNull = false): ?Stringable {
             $value = Arr::get($array, $key);
 
             if (StringHelper::canBeCastToString($value)) {
@@ -142,7 +160,13 @@ final class ArrMixin
                     $value = json_encode($value);
                 }
 
-                return new Stringable(is_string($value) ? $value : (string) $value);
+                $stringValue = is_string($value) ? $value : (string) $value;
+
+                if ($emptyStringAsNull && $stringValue === '') {
+                    return null;
+                }
+
+                return new Stringable($stringValue);
             }
 
             return null;
@@ -151,7 +175,7 @@ final class ArrMixin
 
     public function toArray(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key, array $default = []): array {
+        return static function (ArrayAccess|array $source, string|int|null $key, array $default = [], bool $emptyArrayAsNull = false): array {
             $value = Arr::get($source, $key);
 
             if ($value === null) {
@@ -159,6 +183,10 @@ final class ArrMixin
             }
 
             if (is_array($value)) {
+                if ($emptyArrayAsNull && $value === []) {
+                    return $default;
+                }
+
                 return $value;
             }
 
@@ -192,7 +220,7 @@ final class ArrMixin
 
     public function toArrayOrNull(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key): ?array {
+        return static function (ArrayAccess|array $source, string|int|null $key, bool $emptyArrayAsNull = false): ?array {
             $value = Arr::get($source, $key);
 
             if ($value === null) {
@@ -200,6 +228,10 @@ final class ArrMixin
             }
 
             if (is_array($value)) {
+                if ($emptyArrayAsNull && $value === []) {
+                    return null;
+                }
+
                 return $value;
             }
 
@@ -233,9 +265,9 @@ final class ArrMixin
 
     public function toCollection(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key, Collection|array $default = new Collection): Collection {
+        return static function (ArrayAccess|array $source, string|int|null $key, Collection|array $default = new Collection, bool $emptyArrayAsNull = false): Collection {
             $method = new ArrMixin()->toArrayOrNull();
-            $array = $method($source, $key);
+            $array = $method($source, $key, $emptyArrayAsNull);
 
             if ($array === null) {
                 return $default instanceof Collection ? $default : new Collection($default);
@@ -247,9 +279,9 @@ final class ArrMixin
 
     public function toCollectionOrNull(): Closure
     {
-        return static function (ArrayAccess|array $source, string|int|null $key): ?Collection {
+        return static function (ArrayAccess|array $source, string|int|null $key, bool $emptyArrayAsNull = false): ?Collection {
             $method = new ArrMixin()->toArrayOrNull();
-            $array = $method($source, $key);
+            $array = $method($source, $key, $emptyArrayAsNull);
 
             if ($array === null) {
                 return null;

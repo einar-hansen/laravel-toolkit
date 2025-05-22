@@ -986,12 +986,56 @@ final class ArrMixinTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
+    #[Test]
+    public function it_can_treat_empty_string_as_null_in_to_string(): void
+    {
+        $array = [
+            'empty_string' => '',
+            'non_empty_string' => 'value',
+            'null_value' => null,
+        ];
+
+        // Default behavior - empty string remains empty string
+        $this->assertSame('', Arr::toString($array, 'empty_string', 'default'));
+
+        // With emptyStringAsNull flag - empty string is treated as null and default is returned
+        $this->assertSame('default', Arr::toString($array, 'empty_string', 'default', true));
+
+        // Non-empty string is not affected
+        $this->assertSame('value', Arr::toString($array, 'non_empty_string', 'default', true));
+
+        // Null value still returns default
+        $this->assertSame('default', Arr::toString($array, 'null_value', 'default', true));
+    }
+
     #[DataProvider('stringOrNullProvider')]
     #[Test]
     public function it_can_get_a_value_as_string_or_null(array $array, string $key, ?string $expected): void
     {
         $result = Arr::toStringOrNull($array, $key);
         $this->assertSame($expected, $result);
+    }
+
+    #[Test]
+    public function it_can_treat_empty_string_as_null_in_to_string_or_null(): void
+    {
+        $array = [
+            'empty_string' => '',
+            'non_empty_string' => 'value',
+            'null_value' => null,
+        ];
+
+        // Default behavior - empty string remains empty string
+        $this->assertSame('', Arr::toStringOrNull($array, 'empty_string'));
+
+        // With emptyStringAsNull flag - empty string is treated as null
+        $this->assertNull(Arr::toStringOrNull($array, 'empty_string', true));
+
+        // Non-empty string is not affected
+        $this->assertSame('value', Arr::toStringOrNull($array, 'non_empty_string', true));
+
+        // Null value still returns null
+        $this->assertNull(Arr::toStringOrNull($array, 'null_value', true));
     }
 
     #[DataProvider('integerProvider')]
@@ -1061,6 +1105,28 @@ final class ArrMixinTest extends TestCase
     }
 
     #[Test]
+    public function it_can_treat_empty_string_as_null_in_to_stringable(): void
+    {
+        $array = [
+            'empty_string' => '',
+            'non_empty_string' => 'value',
+            'null_value' => null,
+        ];
+
+        // Default behavior - empty string remains empty string
+        $this->assertSame('', (string) Arr::toStringable($array, 'empty_string', 'default'));
+
+        // With emptyStringAsNull flag - empty string is treated as null and default is returned
+        $this->assertSame('default', (string) Arr::toStringable($array, 'empty_string', 'default', true));
+
+        // Non-empty string is not affected
+        $this->assertSame('value', (string) Arr::toStringable($array, 'non_empty_string', 'default', true));
+
+        // Null value still returns default
+        $this->assertSame('default', (string) Arr::toStringable($array, 'null_value', 'default', true));
+    }
+
+    #[Test]
     public function it_can_get_a_value_as_stringable_or_null(): void
     {
         $array = [
@@ -1081,6 +1147,28 @@ final class ArrMixinTest extends TestCase
         $this->assertSame('12.34', (string) Arr::toStringableOrNull($array, 'key6')); // Float converted to string
         $this->assertSame('{"key":"value"}', (string) Arr::toStringableOrNull($array, 'key7'));                 // Non-scalar (array) returns null
         $this->assertNull(Arr::toStringableOrNull($array, 'key8'));                 // Missing key returns null
+    }
+
+    #[Test]
+    public function it_can_treat_empty_string_as_null_in_to_stringable_or_null(): void
+    {
+        $array = [
+            'empty_string' => '',
+            'non_empty_string' => 'value',
+            'null_value' => null,
+        ];
+
+        // Default behavior - empty string remains empty string
+        $this->assertSame('', (string) Arr::toStringableOrNull($array, 'empty_string'));
+
+        // With emptyStringAsNull flag - empty string is treated as null
+        $this->assertNull(Arr::toStringableOrNull($array, 'empty_string', true));
+
+        // Non-empty string is not affected
+        $this->assertSame('value', (string) Arr::toStringableOrNull($array, 'non_empty_string', true));
+
+        // Null value still returns null
+        $this->assertNull(Arr::toStringableOrNull($array, 'null_value', true));
     }
 
     #[DataProvider('booleanOrNullProvider')]
@@ -1149,12 +1237,57 @@ final class ArrMixinTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
+    #[Test]
+    public function it_can_treat_empty_array_as_null_in_to_array(): void
+    {
+        $array = [
+            'empty_array' => [],
+            'non_empty_array' => ['value'],
+            'null_value' => null,
+        ];
+        $default = ['default'];
+
+        // Default behavior - empty array remains empty array
+        $this->assertSame([], Arr::toArray($array, 'empty_array', $default));
+
+        // With emptyArrayAsNull flag - empty array is treated as null and default is returned
+        $this->assertSame($default, Arr::toArray($array, 'empty_array', $default, true));
+
+        // Non-empty array is not affected
+        $this->assertSame(['value'], Arr::toArray($array, 'non_empty_array', $default, true));
+
+        // Null value still returns default
+        $this->assertSame($default, Arr::toArray($array, 'null_value', $default, true));
+    }
+
     #[DataProvider('arrayOrNullProvider')]
     #[Test]
     public function it_can_get_a_value_as_array_or_null(array $array, string $key, ?array $expected): void
     {
         $result = Arr::toArrayOrNull($array, $key);
         $this->assertSame($expected, $result);
+    }
+
+    #[Test]
+    public function it_can_treat_empty_array_as_null_in_to_array_or_null(): void
+    {
+        $array = [
+            'empty_array' => [],
+            'non_empty_array' => ['value'],
+            'null_value' => null,
+        ];
+
+        // Default behavior - empty array remains empty array
+        $this->assertSame([], Arr::toArrayOrNull($array, 'empty_array'));
+
+        // With emptyArrayAsNull flag - empty array is treated as null
+        $this->assertNull(Arr::toArrayOrNull($array, 'empty_array', true));
+
+        // Non-empty array is not affected
+        $this->assertSame(['value'], Arr::toArrayOrNull($array, 'non_empty_array', true));
+
+        // Null value still returns null
+        $this->assertNull(Arr::toArrayOrNull($array, 'null_value', true));
     }
 
     #[DataProvider('collectionProvider')]
@@ -1169,6 +1302,37 @@ final class ArrMixinTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $result);
         $this->assertEquals($expected, $result);
+    }
+
+    #[Test]
+    public function it_can_treat_empty_array_as_null_in_to_collection(): void
+    {
+        $array = [
+            'empty_array' => [],
+            'non_empty_array' => ['value'],
+            'null_value' => null,
+        ];
+        $default = new Collection(['default']);
+
+        // Default behavior - empty array becomes empty collection
+        $result = Arr::toCollection($array, 'empty_array', $default);
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertEquals(new Collection([]), $result);
+
+        // With emptyArrayAsNull flag - empty array is treated as null and default is returned
+        $result = Arr::toCollection($array, 'empty_array', $default, true);
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertEquals($default, $result);
+
+        // Non-empty array is not affected
+        $result = Arr::toCollection($array, 'non_empty_array', $default, true);
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertEquals(new Collection(['value']), $result);
+
+        // Null value still returns default
+        $result = Arr::toCollection($array, 'null_value', $default, true);
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertEquals($default, $result);
     }
 
     #[DataProvider('collectionOrNullProvider')]
@@ -1186,6 +1350,34 @@ final class ArrMixinTest extends TestCase
             $this->assertInstanceOf(Collection::class, $result);
             $this->assertEquals($expected, $result);
         }
+    }
+
+    #[Test]
+    public function it_can_treat_empty_array_as_null_in_to_collection_or_null(): void
+    {
+        $array = [
+            'empty_array' => [],
+            'non_empty_array' => ['value'],
+            'null_value' => null,
+        ];
+
+        // Default behavior - empty array becomes empty collection
+        $result = Arr::toCollectionOrNull($array, 'empty_array');
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertEquals(new Collection([]), $result);
+
+        // With emptyArrayAsNull flag - empty array is treated as null
+        $result = Arr::toCollectionOrNull($array, 'empty_array', true);
+        $this->assertNull($result);
+
+        // Non-empty array is not affected
+        $result = Arr::toCollectionOrNull($array, 'non_empty_array', true);
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertEquals(new Collection(['value']), $result);
+
+        // Null value still returns null
+        $result = Arr::toCollectionOrNull($array, 'null_value', true);
+        $this->assertNull($result);
     }
 
     #[DataProvider('wrapListProvider')]
