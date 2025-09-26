@@ -13,7 +13,7 @@ final class TestStringRegexValue extends StringRegexValue
      * Example pattern for email validation
      */
     #[Override]
-    protected function getPattern(): ?string
+    protected function getPattern(): string
     {
         return '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
     }

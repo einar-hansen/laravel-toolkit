@@ -8,12 +8,12 @@ use EinarHansen\Toolkit\ValueObjects\FloatRangeValue;
 
 final class TestFloatRangeValue extends FloatRangeValue
 {
-    protected function getMaxValue(): ?float
+    protected function getMaxValue(): float
     {
         return 100.0;
     }
 
-    protected function getMinValue(): ?float
+    protected function getMinValue(): float
     {
         return 0.0;
     }

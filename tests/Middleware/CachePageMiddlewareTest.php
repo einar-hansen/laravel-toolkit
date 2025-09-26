@@ -31,7 +31,7 @@ class CachePageMiddlewareTest extends TestCase
         $request = Request::create('/test', 'GET');
         $response = new Response('Test content', 200);
 
-        $result = $this->middleware->handle($request, fn () => $response);
+        $result = $this->middleware->handle($request, fn (): Response => $response);
 
         $this->assertEquals('max-age=1800, public', $result->headers->get('Cache-Control'));
     }
@@ -44,7 +44,7 @@ class CachePageMiddlewareTest extends TestCase
         $request = Request::create('/test', 'GET');
         $response = new Response('Test content', 200);
 
-        $result = $this->middleware->handle($request, fn () => $response);
+        $result = $this->middleware->handle($request, fn (): Response => $response);
 
         $this->assertNotEquals('max-age=1800, public', $result->headers->get('Cache-Control'));
     }
@@ -59,7 +59,7 @@ class CachePageMiddlewareTest extends TestCase
         $request = Request::create('/test', 'GET');
         $response = new Response('Test content', 200);
 
-        $result = $this->middleware->handle($request, fn () => $response);
+        $result = $this->middleware->handle($request, fn (): Response => $response);
 
         $this->assertNotEquals('max-age=1800, public', $result->headers->get('Cache-Control'));
     }
@@ -72,7 +72,7 @@ class CachePageMiddlewareTest extends TestCase
         $request = Request::create('/test', 'POST');
         $response = new Response('Test content', 200);
 
-        $result = $this->middleware->handle($request, fn () => $response);
+        $result = $this->middleware->handle($request, fn (): Response => $response);
 
         $this->assertNotEquals('max-age=1800, public', $result->headers->get('Cache-Control'));
     }
@@ -85,7 +85,7 @@ class CachePageMiddlewareTest extends TestCase
         $request = Request::create('/test', 'GET');
         $response = new Response('Not found', 404);
 
-        $result = $this->middleware->handle($request, fn () => $response);
+        $result = $this->middleware->handle($request, fn (): Response => $response);
 
         $this->assertNotEquals('max-age=1800, public', $result->headers->get('Cache-Control'));
     }
@@ -98,7 +98,7 @@ class CachePageMiddlewareTest extends TestCase
         $request = Request::create('/test', 'GET');
         $response = new Response('Server error', 500);
 
-        $result = $this->middleware->handle($request, fn () => $response);
+        $result = $this->middleware->handle($request, fn (): Response => $response);
 
         $this->assertNotEquals('max-age=1800, public', $result->headers->get('Cache-Control'));
     }

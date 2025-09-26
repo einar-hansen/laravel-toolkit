@@ -11,12 +11,12 @@ use Override;
 
 final class TestDateRangeValue extends DateRangeValue
 {
-    protected function getMaxDate(): ?CarbonInterface
+    protected function getMaxDate(): CarbonInterface
     {
         return Carbon::parse('2025-12-31');
     }
 
-    protected function getMinDate(): ?CarbonInterface
+    protected function getMinDate(): CarbonInterface
     {
         return Carbon::parse('2020-01-01');
     }

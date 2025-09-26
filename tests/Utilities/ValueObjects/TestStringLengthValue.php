@@ -10,13 +10,13 @@ use Override;
 final class TestStringLengthValue extends StringLengthValue
 {
     #[Override]
-    protected function getMaxLength(): ?int
+    protected function getMaxLength(): int
     {
         return 50;
     }
 
     #[Override]
-    protected function getMinLength(): ?int
+    protected function getMinLength(): int
     {
         return 5;
     }

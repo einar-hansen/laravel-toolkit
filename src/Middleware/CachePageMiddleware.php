@@ -39,10 +39,6 @@ class CachePageMiddleware
             return false;
         }
 
-        if (! $response->isSuccessful()) {
-            return false;
-        }
-
-        return true;
+        return $response->isSuccessful();
     }
 }
