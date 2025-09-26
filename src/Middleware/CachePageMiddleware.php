@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EinarHansen\Toolkit\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CachePageMiddleware
 {
-    public function handle($request, Closure $next): Response
+    public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
 
@@ -25,7 +26,7 @@ class CachePageMiddleware
         return $response;
     }
 
-    public function shouldCacheResponse($request, Response $response): bool
+    public function shouldCacheResponse(Request $request, Response $response): bool
     {
         if (! app()->isProduction()) {
             return false;
