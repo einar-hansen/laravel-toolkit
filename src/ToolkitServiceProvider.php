@@ -23,6 +23,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Override;
 
 final class ToolkitServiceProvider extends BaseServiceProvider
 {
@@ -44,6 +45,16 @@ final class ToolkitServiceProvider extends BaseServiceProvider
     ];
 
     /**
+     * Register any application services.
+     */
+    #[Override]
+    public function register(): void
+    {
+        // Merge configuration
+        $this->mergeConfigFrom(__DIR__.'/../config/toolkit.php', 'toolkit');
+    }
+
+    /**
      * Bootstrap the application services.
      */
     public function boot(): void
@@ -56,9 +67,12 @@ final class ToolkitServiceProvider extends BaseServiceProvider
                 PublishPintConfigCommand::class,
             ]);
 
+            // Publish configuration
             $this->publishes([
                 __DIR__.'/../config/toolkit.php' => $this->app->basePath('config/toolkit.php'),
             ], 'toolkit-config');
+
+            // Publish stubs
             $this->publishes([
                 __DIR__.'/../stubs' => $this->app->basePath('stubs'),
             ], 'toolkit-stubs');

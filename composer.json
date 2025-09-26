@@ -1,77 +1,71 @@
 {
-    "name": "einar-hansen/laravel-toolkit",
-    "description": "A collection of helpful utilities and extensions to speed up your Laravel development.",
-    "keywords": [
-        "einar",
-        "einar-hansen",
-        "laravel"
+  "name": "einar-hansen/laravel-toolkit",
+  "description": "A collection of helpful utilities and extensions to speed up your Laravel development.",
+  "keywords": [
+    "einar",
+    "einar-hansen",
+    "laravel"
+  ],
+  "homepage": "https://github.com/einar-hansen/laravel-toolkit",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Einar Hansen",
+      "email": "einar@einarhansen.dev",
+      "homepage": "https://einarhansen.dev",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.4",
+    "giggsey/libphonenumber-for-php-lite": "^9.0",
+    "halaxa/json-machine": "^1.2",
+    "illuminate/config": "^12.0",
+    "illuminate/container": "^12.0",
+    "illuminate/http": "^12.0",
+    "illuminate/support": "^12.0"
+  },
+  "require-dev": {
+    "larastan/larastan": "^3.7",
+    "laravel/pint": "^1.25",
+    "orchestra/testbench": "^10.6",
+    "phpunit/phpunit": "^12.3",
+    "rector/rector": "^2.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "EinarHansen\\Toolkit\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "EinarHansen\\Toolkit\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "EinarHansen\\Toolkit\\ToolkitServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "analyse": "vendor/bin/phpstan analyse",
+    "format": [
+      "@rector",
+      "@pint"
     ],
-    "homepage": "https://github.com/einar-hansen/laravel-toolkit",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Einar Hansen",
-            "email": "einar@einarhansen.dev",
-            "homepage": "https://einarhansen.dev",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": "^8.4",
-        "giggsey/libphonenumber-for-php-lite": "^9.0",
-        "halaxa/json-machine": "^1.2",
-        "illuminate/config": "^12.0",
-        "illuminate/container": "^12.0",
-        "illuminate/http": "^12.0",
-        "illuminate/support": "^12.0"
-    },
-    "require-dev": {
-        "driftingly/rector-laravel": "^2.0.0",
-        "laravel/pint": "^1.21",
-        "orchestra/testbench": "^10.2.1",
-        "phpstan/phpstan": "^2.1.12",
-        "phpunit/phpunit": "^11.5.3|^12.0.1",
-        "rector/rector": "^2.0.11",
-        "symfony/var-dumper": "^7.2.3",
-        "tomasvotruba/type-coverage": "^2.0.2"
-    },
-    "autoload": {
-        "psr-4": {
-            "EinarHansen\\Toolkit\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "EinarHansen\\Toolkit\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "EinarHansen\\Toolkit\\ToolkitServiceProvider"
-            ]
-        }
-    },
-    "scripts": {
-        "analyse": "vendor/bin/phpstan analyse",
-        "analyse:ci": "vendor/bin/phpstan --ansi analyse",
-        "format": [
-            "vendor/bin/pint",
-            "vendor/bin/rector process"
-        ],
-        "format:ci": [
-            "vendor/bin/pint --test",
-            "vendor/bin/rector process --dry-run --ansi"
-        ],
-        "test": "vendor/bin/phpunit"
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "phpstan/extension-installer": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    "pint": "./vendor/bin/pint",
+    "rector": "./vendor/bin/rector process",
+    "test": "vendor/bin/phpunit"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "phpstan/extension-installer": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
