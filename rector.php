@@ -3,19 +3,25 @@
 declare(strict_types=1);
 
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
+use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
+    ->withAttributesSets(
+        symfony: true,
+        doctrine: true,
+        phpunit: true,
+    )
+    ->withCache(
+        cacheDirectory: '/tmp/format',
+        cacheClass: FileCacheStorage::class,
+    )
+    ->withImportNames(removeUnusedImports: true)
     ->withPaths([
         __DIR__.'/src',
         __DIR__.'/tests',
     ])
-    ->withCache(
-        cacheDirectory: '/tmp/rector',
-        cacheClass: FileCacheStorage::class,
-    )
-    ->withImportNames(removeUnusedImports: true)
-    ->withPhpSets(php83: true)
+    ->withPhpSets(php84: true)
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
@@ -25,6 +31,8 @@ return RectorConfig::configure()
         instanceOf: true,
         earlyReturn: true,
         strictBooleans: true,
-        carbon: true,
     )
-    ->withRules([]);
+    ->withRules([])
+    ->withSkip([
+        EncapsedStringsToSprintfRector::class,
+    ]);

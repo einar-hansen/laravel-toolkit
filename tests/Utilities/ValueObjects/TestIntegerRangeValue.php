@@ -10,13 +10,13 @@ use Override;
 final class TestIntegerRangeValue extends IntegerRangeValue
 {
     #[Override]
-    protected function getMaxValue(): ?int
+    protected function getMaxValue(): int
     {
         return 100;
     }
 
     #[Override]
-    protected function getMinValue(): ?int
+    protected function getMinValue(): int
     {
         return 1;
     }

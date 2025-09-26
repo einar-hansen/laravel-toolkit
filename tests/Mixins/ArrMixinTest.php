@@ -457,7 +457,7 @@ final class ArrMixinTest extends TestCase
             // If the original expected value matched the default, it means the original value
             // was invalid/null/missing, so the *OrNull version should return null.
             // Keep cases where a valid boolean was found.
-            if (str_contains($name, ' (default ') || str_contains($name, 'null value') || str_contains($name, 'missing key') || str_contains($name, 'random string')) {
+            if (str_contains((string) $name, ' (default ') || str_contains((string) $name, 'null value') || str_contains((string) $name, 'missing key') || str_contains((string) $name, 'random string')) {
                 $orNullCases[$name.' -> null'] = [$case[0], $case[1], null];
             } else {
                 // Remove the default value argument ($case[2])
