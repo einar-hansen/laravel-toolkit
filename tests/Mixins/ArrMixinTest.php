@@ -957,6 +957,252 @@ final class ArrMixinTest extends TestCase
         ];
     }
 
+    public static function whenHasProvider(): array
+    {
+        return [
+            'key exists - callback executed' => [
+                'array' => ['name' => 'Einar', 'age' => 30],
+                'key' => 'name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'key missing - default callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'age',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'nested key exists' => [
+                'array' => ['user' => ['name' => 'Einar']],
+                'key' => 'user.name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'nested key missing' => [
+                'array' => ['user' => ['name' => 'Einar']],
+                'key' => 'user.age',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    public static function whenMissingProvider(): array
+    {
+        return [
+            'key missing - callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'age',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'key exists - default callback executed' => [
+                'array' => ['name' => 'Einar', 'age' => 30],
+                'key' => 'name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'nested key missing' => [
+                'array' => ['user' => ['name' => 'Einar']],
+                'key' => 'user.age',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'nested key exists' => [
+                'array' => ['user' => ['name' => 'Einar']],
+                'key' => 'user.name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    public static function whenEmptyProvider(): array
+    {
+        return [
+            'empty string - callback executed' => [
+                'array' => ['name' => ''],
+                'key' => 'name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'non-empty string - default callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'zero - callback executed' => [
+                'array' => ['count' => 0],
+                'key' => 'count',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'null - callback executed' => [
+                'array' => ['value' => null],
+                'key' => 'value',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'false - callback executed' => [
+                'array' => ['flag' => false],
+                'key' => 'flag',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'empty array - callback executed' => [
+                'array' => ['items' => []],
+                'key' => 'items',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'non-empty value - default callback executed' => [
+                'array' => ['count' => 5],
+                'key' => 'count',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    public static function whenNotEmptyProvider(): array
+    {
+        return [
+            'non-empty string - callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'empty string - default callback executed' => [
+                'array' => ['name' => ''],
+                'key' => 'name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'non-zero number - callback executed' => [
+                'array' => ['count' => 5],
+                'key' => 'count',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'zero - default callback executed' => [
+                'array' => ['count' => 0],
+                'key' => 'count',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'true - callback executed' => [
+                'array' => ['flag' => true],
+                'key' => 'flag',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'false - default callback executed' => [
+                'array' => ['flag' => false],
+                'key' => 'flag',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'non-empty array - callback executed' => [
+                'array' => ['items' => [1, 2, 3]],
+                'key' => 'items',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'empty array - default callback executed' => [
+                'array' => ['items' => []],
+                'key' => 'items',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    public static function whenNullProvider(): array
+    {
+        return [
+            'null value - callback executed' => [
+                'array' => ['value' => null],
+                'key' => 'value',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'non-null value - default callback executed' => [
+                'array' => ['value' => 'something'],
+                'key' => 'value',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'missing key returns null - callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'age',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'zero is not null - default callback executed' => [
+                'array' => ['count' => 0],
+                'key' => 'count',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'empty string is not null - default callback executed' => [
+                'array' => ['name' => ''],
+                'key' => 'name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'false is not null - default callback executed' => [
+                'array' => ['flag' => false],
+                'key' => 'flag',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    public static function whenNotNullProvider(): array
+    {
+        return [
+            'non-null value - callback executed' => [
+                'array' => ['value' => 'something'],
+                'key' => 'value',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'null value - default callback executed' => [
+                'array' => ['value' => null],
+                'key' => 'value',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'missing key returns null - default callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'age',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'zero is not null - callback executed' => [
+                'array' => ['count' => 0],
+                'key' => 'count',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'empty string is not null - callback executed' => [
+                'array' => ['name' => ''],
+                'key' => 'name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'false is not null - callback executed' => [
+                'array' => ['flag' => false],
+                'key' => 'flag',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+        ];
+    }
+
     #[DataProvider('tryKeysProvider')]
     #[Test]
     public function it_can_try_multiple_keys_and_return_first_found(array $array, array $keys, mixed $expected): void
@@ -1391,36 +1637,6 @@ final class ArrMixinTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public static function whenHasProvider(): array
-    {
-        return [
-            'key exists - callback executed' => [
-                'array' => ['name' => 'Einar', 'age' => 30],
-                'key' => 'name',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'key missing - default callback executed' => [
-                'array' => ['name' => 'Einar'],
-                'key' => 'age',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'nested key exists' => [
-                'array' => ['user' => ['name' => 'Einar']],
-                'key' => 'user.name',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'nested key missing' => [
-                'array' => ['user' => ['name' => 'Einar']],
-                'key' => 'user.age',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-        ];
-    }
-
     #[DataProvider('whenHasProvider')]
     #[Test]
     public function it_executes_callback_when_key_exists(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
@@ -1428,13 +1644,13 @@ final class ArrMixinTest extends TestCase
         $callbackCalled = false;
         $defaultCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
         };
 
-        $default = function ($arr) use (&$defaultCalled) {
+        $default = function ($arr) use (&$defaultCalled): string {
             $defaultCalled = true;
 
             return 'default_result';
@@ -1458,7 +1674,7 @@ final class ArrMixinTest extends TestCase
         $array = ['name' => 'Einar'];
         $callbackCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
@@ -1470,36 +1686,6 @@ final class ArrMixinTest extends TestCase
         $this->assertSame($array, $result);
     }
 
-    public static function whenMissingProvider(): array
-    {
-        return [
-            'key missing - callback executed' => [
-                'array' => ['name' => 'Einar'],
-                'key' => 'age',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'key exists - default callback executed' => [
-                'array' => ['name' => 'Einar', 'age' => 30],
-                'key' => 'name',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'nested key missing' => [
-                'array' => ['user' => ['name' => 'Einar']],
-                'key' => 'user.age',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'nested key exists' => [
-                'array' => ['user' => ['name' => 'Einar']],
-                'key' => 'user.name',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-        ];
-    }
-
     #[DataProvider('whenMissingProvider')]
     #[Test]
     public function it_executes_callback_when_key_missing(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
@@ -1507,13 +1693,13 @@ final class ArrMixinTest extends TestCase
         $callbackCalled = false;
         $defaultCalled = false;
 
-        $callback = function ($arr) use (&$callbackCalled) {
+        $callback = function ($arr) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
         };
 
-        $default = function ($arr, $value) use (&$defaultCalled) {
+        $default = function ($arr, $value) use (&$defaultCalled): string {
             $defaultCalled = true;
 
             return 'default_result';
@@ -1537,7 +1723,7 @@ final class ArrMixinTest extends TestCase
         $array = ['name' => 'Einar'];
         $callbackCalled = false;
 
-        $callback = function ($arr) use (&$callbackCalled) {
+        $callback = function ($arr) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
@@ -1549,54 +1735,6 @@ final class ArrMixinTest extends TestCase
         $this->assertSame($array, $result);
     }
 
-    public static function whenEmptyProvider(): array
-    {
-        return [
-            'empty string - callback executed' => [
-                'array' => ['name' => ''],
-                'key' => 'name',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'non-empty string - default callback executed' => [
-                'array' => ['name' => 'Einar'],
-                'key' => 'name',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'zero - callback executed' => [
-                'array' => ['count' => 0],
-                'key' => 'count',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'null - callback executed' => [
-                'array' => ['value' => null],
-                'key' => 'value',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'false - callback executed' => [
-                'array' => ['flag' => false],
-                'key' => 'flag',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'empty array - callback executed' => [
-                'array' => ['items' => []],
-                'key' => 'items',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'non-empty value - default callback executed' => [
-                'array' => ['count' => 5],
-                'key' => 'count',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-        ];
-    }
-
     #[DataProvider('whenEmptyProvider')]
     #[Test]
     public function it_executes_callback_when_value_is_empty(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
@@ -1604,13 +1742,13 @@ final class ArrMixinTest extends TestCase
         $callbackCalled = false;
         $defaultCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
         };
 
-        $default = function ($arr, $value) use (&$defaultCalled) {
+        $default = function ($arr, $value) use (&$defaultCalled): string {
             $defaultCalled = true;
 
             return 'default_result';
@@ -1634,7 +1772,7 @@ final class ArrMixinTest extends TestCase
         $array = ['name' => 'Einar'];
         $callbackCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
@@ -1646,60 +1784,6 @@ final class ArrMixinTest extends TestCase
         $this->assertSame($array, $result);
     }
 
-    public static function whenNotEmptyProvider(): array
-    {
-        return [
-            'non-empty string - callback executed' => [
-                'array' => ['name' => 'Einar'],
-                'key' => 'name',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'empty string - default callback executed' => [
-                'array' => ['name' => ''],
-                'key' => 'name',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'non-zero number - callback executed' => [
-                'array' => ['count' => 5],
-                'key' => 'count',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'zero - default callback executed' => [
-                'array' => ['count' => 0],
-                'key' => 'count',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'true - callback executed' => [
-                'array' => ['flag' => true],
-                'key' => 'flag',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'false - default callback executed' => [
-                'array' => ['flag' => false],
-                'key' => 'flag',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'non-empty array - callback executed' => [
-                'array' => ['items' => [1, 2, 3]],
-                'key' => 'items',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'empty array - default callback executed' => [
-                'array' => ['items' => []],
-                'key' => 'items',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-        ];
-    }
-
     #[DataProvider('whenNotEmptyProvider')]
     #[Test]
     public function it_executes_callback_when_value_is_not_empty(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
@@ -1707,13 +1791,13 @@ final class ArrMixinTest extends TestCase
         $callbackCalled = false;
         $defaultCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
         };
 
-        $default = function ($arr, $value) use (&$defaultCalled) {
+        $default = function ($arr, $value) use (&$defaultCalled): string {
             $defaultCalled = true;
 
             return 'default_result';
@@ -1737,7 +1821,7 @@ final class ArrMixinTest extends TestCase
         $array = ['name' => ''];
         $callbackCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
@@ -1749,48 +1833,6 @@ final class ArrMixinTest extends TestCase
         $this->assertSame($array, $result);
     }
 
-    public static function whenNullProvider(): array
-    {
-        return [
-            'null value - callback executed' => [
-                'array' => ['value' => null],
-                'key' => 'value',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'non-null value - default callback executed' => [
-                'array' => ['value' => 'something'],
-                'key' => 'value',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'missing key returns null - callback executed' => [
-                'array' => ['name' => 'Einar'],
-                'key' => 'age',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'zero is not null - default callback executed' => [
-                'array' => ['count' => 0],
-                'key' => 'count',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'empty string is not null - default callback executed' => [
-                'array' => ['name' => ''],
-                'key' => 'name',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'false is not null - default callback executed' => [
-                'array' => ['flag' => false],
-                'key' => 'flag',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-        ];
-    }
-
     #[DataProvider('whenNullProvider')]
     #[Test]
     public function it_executes_callback_when_value_is_null(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
@@ -1798,13 +1840,13 @@ final class ArrMixinTest extends TestCase
         $callbackCalled = false;
         $defaultCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
         };
 
-        $default = function ($arr, $value) use (&$defaultCalled) {
+        $default = function ($arr, $value) use (&$defaultCalled): string {
             $defaultCalled = true;
 
             return 'default_result';
@@ -1828,7 +1870,7 @@ final class ArrMixinTest extends TestCase
         $array = ['name' => 'Einar'];
         $callbackCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
@@ -1840,48 +1882,6 @@ final class ArrMixinTest extends TestCase
         $this->assertSame($array, $result);
     }
 
-    public static function whenNotNullProvider(): array
-    {
-        return [
-            'non-null value - callback executed' => [
-                'array' => ['value' => 'something'],
-                'key' => 'value',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'null value - default callback executed' => [
-                'array' => ['value' => null],
-                'key' => 'value',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'missing key returns null - default callback executed' => [
-                'array' => ['name' => 'Einar'],
-                'key' => 'age',
-                'expectedCallbackCalled' => false,
-                'expectedDefaultCalled' => true,
-            ],
-            'zero is not null - callback executed' => [
-                'array' => ['count' => 0],
-                'key' => 'count',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'empty string is not null - callback executed' => [
-                'array' => ['name' => ''],
-                'key' => 'name',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-            'false is not null - callback executed' => [
-                'array' => ['flag' => false],
-                'key' => 'flag',
-                'expectedCallbackCalled' => true,
-                'expectedDefaultCalled' => false,
-            ],
-        ];
-    }
-
     #[DataProvider('whenNotNullProvider')]
     #[Test]
     public function it_executes_callback_when_value_is_not_null(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
@@ -1889,13 +1889,13 @@ final class ArrMixinTest extends TestCase
         $callbackCalled = false;
         $defaultCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';
         };
 
-        $default = function ($arr, $value) use (&$defaultCalled) {
+        $default = function ($arr, $value) use (&$defaultCalled): string {
             $defaultCalled = true;
 
             return 'default_result';
@@ -1919,7 +1919,7 @@ final class ArrMixinTest extends TestCase
         $array = ['value' => null];
         $callbackCalled = false;
 
-        $callback = function ($arr, $value) use (&$callbackCalled) {
+        $callback = function ($arr, $value) use (&$callbackCalled): string {
             $callbackCalled = true;
 
             return 'callback_result';

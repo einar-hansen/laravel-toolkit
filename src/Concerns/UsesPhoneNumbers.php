@@ -19,7 +19,7 @@ trait UsesPhoneNumbers
      */
     public function phoneNumbersMatch(?string $phone1, ?string $phone2, ?string $region = null): bool
     {
-        if ($phone1 === null || $phone1 === '' || $phone1 === '0' || ($phone2 === null || $phone2 === '' || $phone2 === '0')) {
+        if (in_array($phone1, [null, '', '0'], true) || (in_array($phone2, [null, '', '0'], true))) {
             return false;
         }
 
@@ -42,7 +42,7 @@ trait UsesPhoneNumbers
      */
     public function normalizePhoneNumber(?string $phone, ?string $region = null): ?string
     {
-        if ($phone === null || $phone === '' || $phone === '0') {
+        if (in_array($phone, [null, '', '0'], true)) {
             return null;
         }
 
@@ -74,7 +74,7 @@ trait UsesPhoneNumbers
      */
     public function formatPhoneNumber(?string $phone, PhoneNumberFormat $format = PhoneNumberFormat::INTERNATIONAL, ?string $region = null): ?string
     {
-        if ($phone === null || $phone === '' || $phone === '0') {
+        if (in_array($phone, [null, '', '0'], true)) {
             return null;
         }
 
@@ -99,7 +99,7 @@ trait UsesPhoneNumbers
      */
     public function isValidPhoneNumber(?string $phone, ?string $region = null): bool
     {
-        if ($phone === null || $phone === '' || $phone === '0') {
+        if (in_array($phone, [null, '', '0'], true)) {
             return false;
         }
 
@@ -120,7 +120,7 @@ trait UsesPhoneNumbers
      */
     public function getPhoneNumberType(?string $phone, ?string $region = null): ?string
     {
-        if ($phone === null || $phone === '' || $phone === '0') {
+        if (in_array($phone, [null, '', '0'], true)) {
             return null;
         }
 
@@ -155,7 +155,7 @@ trait UsesPhoneNumbers
      */
     public function getPhoneNumberRegion(?string $phone, ?string $defaultRegion = null): ?string
     {
-        if ($phone === null || $phone === '' || $phone === '0') {
+        if (in_array($phone, [null, '', '0'], true)) {
             return null;
         }
 
