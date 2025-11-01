@@ -1390,4 +1390,544 @@ final class ArrMixinTest extends TestCase
         $result = Arr::wrapList($value);
         $this->assertSame($expected, $result);
     }
+
+    public static function whenHasProvider(): array
+    {
+        return [
+            'key exists - callback executed' => [
+                'array' => ['name' => 'Einar', 'age' => 30],
+                'key' => 'name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'key missing - default callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'age',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'nested key exists' => [
+                'array' => ['user' => ['name' => 'Einar']],
+                'key' => 'user.name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'nested key missing' => [
+                'array' => ['user' => ['name' => 'Einar']],
+                'key' => 'user.age',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    #[DataProvider('whenHasProvider')]
+    #[Test]
+    public function it_executes_callback_when_key_exists(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
+    {
+        $callbackCalled = false;
+        $defaultCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $default = function ($arr) use (&$defaultCalled) {
+            $defaultCalled = true;
+
+            return 'default_result';
+        };
+
+        $result = Arr::whenHas($array, $key, $callback, $default);
+
+        $this->assertSame($expectedCallbackCalled, $callbackCalled);
+        $this->assertSame($expectedDefaultCalled, $defaultCalled);
+
+        if ($expectedCallbackCalled) {
+            $this->assertSame('callback_result', $result);
+        } elseif ($expectedDefaultCalled) {
+            $this->assertSame('default_result', $result);
+        }
+    }
+
+    #[Test]
+    public function it_returns_array_when_key_missing_and_no_default_callback_for_when_has(): void
+    {
+        $array = ['name' => 'Einar'];
+        $callbackCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $result = Arr::whenHas($array, 'age', $callback);
+
+        $this->assertFalse($callbackCalled);
+        $this->assertSame($array, $result);
+    }
+
+    public static function whenMissingProvider(): array
+    {
+        return [
+            'key missing - callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'age',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'key exists - default callback executed' => [
+                'array' => ['name' => 'Einar', 'age' => 30],
+                'key' => 'name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'nested key missing' => [
+                'array' => ['user' => ['name' => 'Einar']],
+                'key' => 'user.age',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'nested key exists' => [
+                'array' => ['user' => ['name' => 'Einar']],
+                'key' => 'user.name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    #[DataProvider('whenMissingProvider')]
+    #[Test]
+    public function it_executes_callback_when_key_missing(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
+    {
+        $callbackCalled = false;
+        $defaultCalled = false;
+
+        $callback = function ($arr) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $default = function ($arr, $value) use (&$defaultCalled) {
+            $defaultCalled = true;
+
+            return 'default_result';
+        };
+
+        $result = Arr::whenMissing($array, $key, $callback, $default);
+
+        $this->assertSame($expectedCallbackCalled, $callbackCalled);
+        $this->assertSame($expectedDefaultCalled, $defaultCalled);
+
+        if ($expectedCallbackCalled) {
+            $this->assertSame('callback_result', $result);
+        } elseif ($expectedDefaultCalled) {
+            $this->assertSame('default_result', $result);
+        }
+    }
+
+    #[Test]
+    public function it_returns_array_when_key_exists_and_no_default_callback_for_when_missing(): void
+    {
+        $array = ['name' => 'Einar'];
+        $callbackCalled = false;
+
+        $callback = function ($arr) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $result = Arr::whenMissing($array, 'name', $callback);
+
+        $this->assertFalse($callbackCalled);
+        $this->assertSame($array, $result);
+    }
+
+    public static function whenEmptyProvider(): array
+    {
+        return [
+            'empty string - callback executed' => [
+                'array' => ['name' => ''],
+                'key' => 'name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'non-empty string - default callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'zero - callback executed' => [
+                'array' => ['count' => 0],
+                'key' => 'count',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'null - callback executed' => [
+                'array' => ['value' => null],
+                'key' => 'value',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'false - callback executed' => [
+                'array' => ['flag' => false],
+                'key' => 'flag',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'empty array - callback executed' => [
+                'array' => ['items' => []],
+                'key' => 'items',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'non-empty value - default callback executed' => [
+                'array' => ['count' => 5],
+                'key' => 'count',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    #[DataProvider('whenEmptyProvider')]
+    #[Test]
+    public function it_executes_callback_when_value_is_empty(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
+    {
+        $callbackCalled = false;
+        $defaultCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $default = function ($arr, $value) use (&$defaultCalled) {
+            $defaultCalled = true;
+
+            return 'default_result';
+        };
+
+        $result = Arr::whenEmpty($array, $key, $callback, $default);
+
+        $this->assertSame($expectedCallbackCalled, $callbackCalled);
+        $this->assertSame($expectedDefaultCalled, $defaultCalled);
+
+        if ($expectedCallbackCalled) {
+            $this->assertSame('callback_result', $result);
+        } elseif ($expectedDefaultCalled) {
+            $this->assertSame('default_result', $result);
+        }
+    }
+
+    #[Test]
+    public function it_returns_array_when_value_not_empty_and_no_default_callback_for_when_empty(): void
+    {
+        $array = ['name' => 'Einar'];
+        $callbackCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $result = Arr::whenEmpty($array, 'name', $callback);
+
+        $this->assertFalse($callbackCalled);
+        $this->assertSame($array, $result);
+    }
+
+    public static function whenNotEmptyProvider(): array
+    {
+        return [
+            'non-empty string - callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'empty string - default callback executed' => [
+                'array' => ['name' => ''],
+                'key' => 'name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'non-zero number - callback executed' => [
+                'array' => ['count' => 5],
+                'key' => 'count',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'zero - default callback executed' => [
+                'array' => ['count' => 0],
+                'key' => 'count',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'true - callback executed' => [
+                'array' => ['flag' => true],
+                'key' => 'flag',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'false - default callback executed' => [
+                'array' => ['flag' => false],
+                'key' => 'flag',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'non-empty array - callback executed' => [
+                'array' => ['items' => [1, 2, 3]],
+                'key' => 'items',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'empty array - default callback executed' => [
+                'array' => ['items' => []],
+                'key' => 'items',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    #[DataProvider('whenNotEmptyProvider')]
+    #[Test]
+    public function it_executes_callback_when_value_is_not_empty(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
+    {
+        $callbackCalled = false;
+        $defaultCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $default = function ($arr, $value) use (&$defaultCalled) {
+            $defaultCalled = true;
+
+            return 'default_result';
+        };
+
+        $result = Arr::whenNotEmpty($array, $key, $callback, $default);
+
+        $this->assertSame($expectedCallbackCalled, $callbackCalled);
+        $this->assertSame($expectedDefaultCalled, $defaultCalled);
+
+        if ($expectedCallbackCalled) {
+            $this->assertSame('callback_result', $result);
+        } elseif ($expectedDefaultCalled) {
+            $this->assertSame('default_result', $result);
+        }
+    }
+
+    #[Test]
+    public function it_returns_array_when_value_is_empty_and_no_default_callback_for_when_not_empty(): void
+    {
+        $array = ['name' => ''];
+        $callbackCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $result = Arr::whenNotEmpty($array, 'name', $callback);
+
+        $this->assertFalse($callbackCalled);
+        $this->assertSame($array, $result);
+    }
+
+    public static function whenNullProvider(): array
+    {
+        return [
+            'null value - callback executed' => [
+                'array' => ['value' => null],
+                'key' => 'value',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'non-null value - default callback executed' => [
+                'array' => ['value' => 'something'],
+                'key' => 'value',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'missing key returns null - callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'age',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'zero is not null - default callback executed' => [
+                'array' => ['count' => 0],
+                'key' => 'count',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'empty string is not null - default callback executed' => [
+                'array' => ['name' => ''],
+                'key' => 'name',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'false is not null - default callback executed' => [
+                'array' => ['flag' => false],
+                'key' => 'flag',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+        ];
+    }
+
+    #[DataProvider('whenNullProvider')]
+    #[Test]
+    public function it_executes_callback_when_value_is_null(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
+    {
+        $callbackCalled = false;
+        $defaultCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $default = function ($arr, $value) use (&$defaultCalled) {
+            $defaultCalled = true;
+
+            return 'default_result';
+        };
+
+        $result = Arr::whenNull($array, $key, $callback, $default);
+
+        $this->assertSame($expectedCallbackCalled, $callbackCalled);
+        $this->assertSame($expectedDefaultCalled, $defaultCalled);
+
+        if ($expectedCallbackCalled) {
+            $this->assertSame('callback_result', $result);
+        } elseif ($expectedDefaultCalled) {
+            $this->assertSame('default_result', $result);
+        }
+    }
+
+    #[Test]
+    public function it_returns_array_when_value_is_not_null_and_no_default_callback_for_when_null(): void
+    {
+        $array = ['name' => 'Einar'];
+        $callbackCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $result = Arr::whenNull($array, 'name', $callback);
+
+        $this->assertFalse($callbackCalled);
+        $this->assertSame($array, $result);
+    }
+
+    public static function whenNotNullProvider(): array
+    {
+        return [
+            'non-null value - callback executed' => [
+                'array' => ['value' => 'something'],
+                'key' => 'value',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'null value - default callback executed' => [
+                'array' => ['value' => null],
+                'key' => 'value',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'missing key returns null - default callback executed' => [
+                'array' => ['name' => 'Einar'],
+                'key' => 'age',
+                'expectedCallbackCalled' => false,
+                'expectedDefaultCalled' => true,
+            ],
+            'zero is not null - callback executed' => [
+                'array' => ['count' => 0],
+                'key' => 'count',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'empty string is not null - callback executed' => [
+                'array' => ['name' => ''],
+                'key' => 'name',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+            'false is not null - callback executed' => [
+                'array' => ['flag' => false],
+                'key' => 'flag',
+                'expectedCallbackCalled' => true,
+                'expectedDefaultCalled' => false,
+            ],
+        ];
+    }
+
+    #[DataProvider('whenNotNullProvider')]
+    #[Test]
+    public function it_executes_callback_when_value_is_not_null(array $array, string $key, bool $expectedCallbackCalled, bool $expectedDefaultCalled): void
+    {
+        $callbackCalled = false;
+        $defaultCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $default = function ($arr, $value) use (&$defaultCalled) {
+            $defaultCalled = true;
+
+            return 'default_result';
+        };
+
+        $result = Arr::whenNotNull($array, $key, $callback, $default);
+
+        $this->assertSame($expectedCallbackCalled, $callbackCalled);
+        $this->assertSame($expectedDefaultCalled, $defaultCalled);
+
+        if ($expectedCallbackCalled) {
+            $this->assertSame('callback_result', $result);
+        } elseif ($expectedDefaultCalled) {
+            $this->assertSame('default_result', $result);
+        }
+    }
+
+    #[Test]
+    public function it_returns_array_when_value_is_null_and_no_default_callback_for_when_not_null(): void
+    {
+        $array = ['value' => null];
+        $callbackCalled = false;
+
+        $callback = function ($arr, $value) use (&$callbackCalled) {
+            $callbackCalled = true;
+
+            return 'callback_result';
+        };
+
+        $result = Arr::whenNotNull($array, 'value', $callback);
+
+        $this->assertFalse($callbackCalled);
+        $this->assertSame($array, $result);
+    }
 }

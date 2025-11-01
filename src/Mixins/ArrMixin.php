@@ -623,4 +623,104 @@ final class ArrMixin
             return $array;
         };
     }
+
+    /**
+     * Execute a callback if the given key exists in the array.
+     *
+     * @return Closure(array<array-key, mixed>, string|int|null, callable, callable|null):mixed
+     */
+    public function whenHas(): Closure
+    {
+        return function (ArrayAccess|array $array, string|int|null $key, callable $callback, ?callable $default = null): mixed {
+            if (Arr::has($array, $key)) {
+                return $callback($array, Arr::get($array, $key));
+            }
+
+            return $default ? $default($array) : $array;
+        };
+    }
+
+    /**
+     * Execute a callback if the given key does not exist in the array.
+     *
+     * @return Closure(array<array-key, mixed>, string|int|null, callable, callable|null):mixed
+     */
+    public function whenMissing(): Closure
+    {
+        return function (ArrayAccess|array $array, string|int|null $key, callable $callback, ?callable $default = null): mixed {
+            if (! Arr::has($array, $key)) {
+                return $callback($array);
+            }
+
+            return $default ? $default($array, Arr::get($array, $key)) : $array;
+        };
+    }
+
+    /**
+     * Execute a callback if the value at the given key is empty.
+     *
+     * @return Closure(array<array-key, mixed>, string|int|null, callable, callable|null):mixed
+     */
+    public function whenEmpty(): Closure
+    {
+        return function (ArrayAccess|array $array, string|int|null $key, callable $callback, ?callable $default = null): mixed {
+            $value = Arr::get($array, $key);
+            if (empty($value)) {
+                return $callback($array, $value);
+            }
+
+            return $default ? $default($array, $value) : $array;
+        };
+    }
+
+    /**
+     * Execute a callback if the value at the given key is not empty.
+     *
+     * @return Closure(array<array-key, mixed>, string|int|null, callable, callable|null):mixed
+     */
+    public function whenNotEmpty(): Closure
+    {
+        return function (ArrayAccess|array $array, string|int|null $key, callable $callback, ?callable $default = null): mixed {
+            $value = Arr::get($array, $key);
+            if (! empty($value)) {
+                return $callback($array, $value);
+            }
+
+            return $default ? $default($array, $value) : $array;
+        };
+    }
+
+    /**
+     * Execute a callback if the value at the given key is null.
+     *
+     * @return Closure(array<array-key, mixed>, string|int|null, callable, callable|null):mixed
+     */
+    public function whenNull(): Closure
+    {
+        return function (ArrayAccess|array $array, string|int|null $key, callable $callback, ?callable $default = null): mixed {
+            $value = Arr::get($array, $key);
+            if ($value === null) {
+                return $callback($array, $value);
+            }
+
+            return $default ? $default($array, $value) : $array;
+        };
+    }
+
+    /**
+     * Execute a callback if the value at the given key is not null.
+     *
+     * @return Closure(array<array-key, mixed>, string|int|null, callable, callable|null):mixed
+     */
+    public function whenNotNull(): Closure
+    {
+        return function (ArrayAccess|array $array, string|int|null $key, callable $callback, ?callable $default = null): mixed {
+            $value = Arr::get($array, $key);
+            if ($value !== null) {
+                return $callback($array, $value);
+            }
+
+            return $default ? $default($array, $value) : $array;
+        };
+    }
 }
