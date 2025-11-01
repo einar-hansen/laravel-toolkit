@@ -110,7 +110,7 @@ abstract class Jsonable implements Arrayable, JsonableContract, JsonSerializable
     public function toResponse($request): JsonResponse
     {
         return Response::json(
-            $this->wrap !== null && $this->wrap !== '' && $this->wrap !== '0' ? [$this->wrap => $this->jsonSerialize()] : $this->jsonSerialize()
+            in_array($this->wrap, [null, '', '0'], true) ? $this->jsonSerialize() : [$this->wrap => $this->jsonSerialize()]
         );
     }
 
@@ -126,7 +126,7 @@ abstract class Jsonable implements Arrayable, JsonableContract, JsonSerializable
     {
         return Response::json(
             array_merge(
-                $this->wrap !== null && $this->wrap !== '' && $this->wrap !== '0' ? [$this->wrap => $this->jsonSerialize()] : $this->jsonSerialize(),
+                in_array($this->wrap, [null, '', '0'], true) ? $this->jsonSerialize() : [$this->wrap => $this->jsonSerialize()],
                 ['meta' => $meta]
             ),
             $status,
