@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit;
 
+use EinarHansen\Toolkit\Commands\PublishPhpstanConfigCommand;
 use EinarHansen\Toolkit\Commands\PublishPintConfigCommand;
 use EinarHansen\Toolkit\Configurables\AggressivePrefetching;
 use EinarHansen\Toolkit\Configurables\AutomaticallyEagerLoadRelationships;
@@ -65,6 +66,7 @@ final class ToolkitServiceProvider extends BaseServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 PublishPintConfigCommand::class,
+                PublishPhpstanConfigCommand::class,
             ]);
 
             // Publish configuration

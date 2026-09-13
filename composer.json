@@ -30,6 +30,7 @@
     "larastan/larastan": "^3.7",
     "laravel/pint": "^1.25",
     "orchestra/testbench": "^10.6 || ^11.0",
+    "phpstan/phpstan": "^2.1.31",
     "phpunit/phpunit": "^12.3",
     "rector/rector": "^2.1"
   },
@@ -37,6 +38,12 @@
     "psr-4": {
       "EinarHansen\\Toolkit\\": "src/"
     }
+  },
+  "suggest": {
+    "larastan/larastan": "Required in the consuming project's development dependencies to use the optional PHPStan rules."
+  },
+  "conflict": {
+    "phpstan/phpstan": "<2.1.31 || >=3.0"
   },
   "autoload-dev": {
     "psr-4": {

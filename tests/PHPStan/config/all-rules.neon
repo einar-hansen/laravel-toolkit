@@ -1,0 +1,14 @@
+includes:
+    - ../../../extension.neon
+
+parameters:
+    toolkit:
+        noHardcodedApiMessages: true
+        mailableLocale: true
+        jsonResources: true
+        modelDocblocks: true
+        modelMixins: true
+        migrationTimestampTz: true
+        noIntegerResourceIds: true
+        rawSql: true
+        explainedEmptyCatches: true

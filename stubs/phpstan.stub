@@ -1,0 +1,28 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+    - ./vendor/einar-hansen/laravel-toolkit/extension.neon
+
+parameters:
+    paths:
+        - app/
+
+    level: 6
+
+    checkModelProperties: true
+    checkOctaneCompatibility: true
+    noUnnecessaryCollectionCall: true
+    noUnnecessaryEnumerableToArrayCalls: true
+    noEnvCallsOutsideOfConfig: true
+
+    checkNullables: true
+    checkUninitializedProperties: true
+    checkDynamicProperties: true
+    checkExplicitMixedMissingReturn: true
+    reportUnmatchedIgnoredErrors: true
+
+    toolkit:
+        noHardcodedApiMessages: true
+        mailableLocale: true
+        jsonResources: true
+        rawSql: true
+        explainedEmptyCatches: true

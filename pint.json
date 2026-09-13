@@ -2,7 +2,8 @@
   "preset": "laravel",
   "notPath": [
     "build",
-    "vendor"
+    "vendor",
+    "tests/Fixtures/PHPStan"
   ],
   "rules": {
     "array_push": true,

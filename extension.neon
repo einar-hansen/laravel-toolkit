@@ -1,0 +1,118 @@
+# Include explicitly from the consuming application's PHPStan configuration.
+parameters:
+    toolkit:
+        noHardcodedApiMessages: false
+        mailableLocale: false
+        jsonResources: false
+        modelDocblocks: false
+        modelMixins: false
+        migrationTimestampTz: false
+        noIntegerResourceIds: false
+        rawSql: false
+        explainedEmptyCatches: false
+        controllerPaths:
+            - app/Http/Controllers
+        migrationPaths:
+            - database/migrations
+        applicationNamespaces:
+            - App\
+        excludedMailableNamespaces: []
+        localeAwareTraits: []
+        localeMethods:
+            - locale
+        safeSqlCalls: []
+        excludedSqlPaths: []
+        excludedCatchPaths: []
+
+parametersSchema:
+    toolkit: structure([
+        noHardcodedApiMessages: bool()
+        mailableLocale: bool()
+        jsonResources: bool()
+        modelDocblocks: bool()
+        modelMixins: bool()
+        migrationTimestampTz: bool()
+        noIntegerResourceIds: bool()
+        rawSql: bool()
+        explainedEmptyCatches: bool()
+        controllerPaths: listOf(string())
+        migrationPaths: listOf(string())
+        applicationNamespaces: listOf(string())
+        excludedMailableNamespaces: listOf(string())
+        localeAwareTraits: listOf(string())
+        localeMethods: listOf(string())
+        safeSqlCalls: listOf(string())
+        excludedSqlPaths: listOf(string())
+        excludedCatchPaths: listOf(string())
+    ])
+
+conditionalTags:
+    EinarHansen\Toolkit\PHPStan\Rules\NoHardcodedApiMessageRule:
+        phpstan.rules.rule: %toolkit.noHardcodedApiMessages%
+    EinarHansen\Toolkit\PHPStan\Rules\MailableLocaleRule:
+        phpstan.rules.rule: %toolkit.mailableLocale%
+    EinarHansen\Toolkit\PHPStan\Rules\JsonResourceAnnotationRule:
+        phpstan.rules.rule: %toolkit.jsonResources%
+    EinarHansen\Toolkit\PHPStan\Rules\JsonResourceMagicPropertyRule:
+        phpstan.rules.rule: %toolkit.jsonResources%
+    EinarHansen\Toolkit\PHPStan\Rules\JsonResourceMagicMethodRule:
+        phpstan.rules.rule: %toolkit.jsonResources%
+    EinarHansen\Toolkit\PHPStan\Rules\ModelDocblockNoHandwrittenAnnotationsRule:
+        phpstan.rules.rule: %toolkit.modelDocblocks%
+    EinarHansen\Toolkit\PHPStan\Rules\ModelMixinRequiredRule:
+        phpstan.rules.rule: %toolkit.modelMixins%
+    EinarHansen\Toolkit\PHPStan\Rules\MigrationTimestampTzRule:
+        phpstan.rules.rule: %toolkit.migrationTimestampTz%
+    EinarHansen\Toolkit\PHPStan\Rules\ResourceIdIsNotAutoIncrementRule:
+        phpstan.rules.rule: %toolkit.noIntegerResourceIds%
+    EinarHansen\Toolkit\PHPStan\Rules\RawSqlNoInterpolationRule:
+        phpstan.rules.rule: %toolkit.rawSql%
+    EinarHansen\Toolkit\PHPStan\Rules\LiteralStringReturnRule:
+        phpstan.rules.rule: %toolkit.rawSql%
+    EinarHansen\Toolkit\PHPStan\Rules\LiteralStringArgumentRule:
+        phpstan.rules.rule: %toolkit.rawSql%
+    EinarHansen\Toolkit\PHPStan\Rules\EmptyCatchMustBeExplainedRule:
+        phpstan.rules.rule: %toolkit.explainedEmptyCatches%
+
+services:
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\NoHardcodedApiMessageRule
+        arguments:
+            restrictedPaths: %toolkit.controllerPaths%
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\MailableLocaleRule
+        arguments:
+            excludedNamespaces: %toolkit.excludedMailableNamespaces%
+            localeAwareTraits: %toolkit.localeAwareTraits%
+            localeMethods: %toolkit.localeMethods%
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\JsonResourceAnnotationRule
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\JsonResourceMagicPropertyRule
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\JsonResourceMagicMethodRule
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\ModelDocblockNoHandwrittenAnnotationsRule
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\ModelMixinRequiredRule
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\MigrationTimestampTzRule
+        arguments:
+            restrictedPaths: %toolkit.migrationPaths%
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\ResourceIdIsNotAutoIncrementRule
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\RawSqlNoInterpolationRule
+        arguments:
+            safeCalls: %toolkit.safeSqlCalls%
+            excludedPaths: %toolkit.excludedSqlPaths%
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\LiteralStringReturnRule
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\LiteralStringArgumentRule
+        arguments:
+            namespacePrefixes: %toolkit.applicationNamespaces%
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\EmptyCatchMustBeExplainedRule
+        arguments:
+            excludedPaths: %toolkit.excludedCatchPaths%
