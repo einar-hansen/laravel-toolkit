@@ -22,12 +22,12 @@ The command writes `phpstan.neon` in your application's root. It asks for confir
 php artisan toolkit:publish:phpstan --backup --force
 ```
 
-The published configuration enables Toolkit’s API-message, mailable, resource, SQL and empty-catch policies and analyses `app/` at level 6 with nullable, uninitialized and dynamic property checks, plus Larastan checks for model properties, Octane compatibility, unnecessary collection calls and `env()` calls outside configuration files. Adjust `paths` and `level` in the published file for your application. See the [PHPStan configuration reference](https://phpstan.org/config-reference) and [Larastan rules](https://github.com/larastan/larastan/blob/3.x/docs/rules.md) for details.
+The published configuration enables Toolkit’s API-message, mailable, resource, SQL, empty-catch and Sleep policies and analyses `app/` at level 6 with nullable, uninitialized and dynamic property checks, plus Larastan checks for model properties, Octane compatibility, unnecessary collection calls and `env()` calls outside configuration files. Adjust `paths` and `level` in the published file for your application. See the [PHPStan configuration reference](https://phpstan.org/config-reference) and [Larastan rules](https://github.com/larastan/larastan/blob/3.x/docs/rules.md) for details.
 
 Larastan must be installed in the consuming application; this package's development dependencies are not installed transitively. If you use `phpstan.neon.dist`, merge the published settings into it and remove `phpstan.neon`, which takes precedence.
 
 
-For an existing project, include `vendor/einar-hansen/laravel-toolkit/extension.neon` and opt in to the rules you want. All 13 custom rules, policy switches, configuration options and migration steps are documented in [Reusable PHPStan rules](docs/phpstan.md).
+For an existing project, include `vendor/einar-hansen/laravel-toolkit/extension.neon` and opt in to the rules you want. All 14 custom rules, policy switches, configuration options and migration steps are documented in [Reusable PHPStan rules](docs/phpstan.md).
 
 # Laravel Boost
 
