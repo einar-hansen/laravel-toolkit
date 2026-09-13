@@ -55,7 +55,6 @@ abstract class Jsonable implements Arrayable, JsonableContract, JsonSerializable
      * Set the wrapper key to use for the response.
      *
      * @param  string|null  $key  The wrapper key, or null to disable wrapping
-     * @return $this
      */
     public function withWrap(?string $key): static
     {
@@ -66,8 +65,6 @@ abstract class Jsonable implements Arrayable, JsonableContract, JsonSerializable
 
     /**
      * Disable wrapping of the response.
-     *
-     * @return $this
      */
     public function withoutWrap(): static
     {

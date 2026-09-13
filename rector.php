@@ -30,9 +30,10 @@ return RectorConfig::configure()
         privatization: true,
         instanceOf: true,
         earlyReturn: true,
-        strictBooleans: true,
     )
     ->withRules([])
     ->withSkip([
+        // Rule fixtures intentionally contain violations and stable line numbers.
+        __DIR__.'/tests/Fixtures/PHPStan',
         EncapsedStringsToSprintfRector::class,
     ]);
