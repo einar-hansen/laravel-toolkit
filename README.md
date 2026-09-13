@@ -33,7 +33,7 @@ For an existing project, include `vendor/einar-hansen/laravel-toolkit/extension.
 
 This package ships `resources/boost/guidelines/core.blade.php` and five focused skills for configuration, data helpers, value objects, HTTP features and PHPStan. In a consuming application with Boost installed, run `php artisan boost:install` and select the package resources. For an existing Boost installation, run `php artisan boost:update --discover` to discover newly added resources.
 
-See [Boost package guidelines](https://laravel.com/framework/docs/boost#third-party-package-ai-guidelines), [package skills](https://laravel.com/framework/docs/boost#third-party-package-skills), and our [per-feature coverage audit](docs/ai-coverage-audit.md).
+See [Boost package guidelines](https://laravel.com/framework/docs/boost#third-party-package-ai-guidelines) and [package skills](https://laravel.com/framework/docs/boost#third-party-package-skills).
 
 # Requirements
 
