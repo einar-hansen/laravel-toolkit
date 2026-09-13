@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\PHPStan\Rules;
 
+use Illuminate\Http\Resources\Json\JsonResource;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
@@ -21,7 +22,7 @@ use PHPStan\Rules\RuleErrorBuilder;
  */
 final class JsonResourceMagicPropertyRule implements Rule
 {
-    private const string JSON_RESOURCE = 'Illuminate\Http\Resources\Json\JsonResource';
+    private const string JSON_RESOURCE = JsonResource::class;
 
     public function getNodeType(): string
     {

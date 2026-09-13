@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\PHPStan\Rules;
 
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Facades\DB;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Concat;
@@ -76,9 +78,9 @@ final readonly class RawSqlNoInterpolationRule implements Rule
         'update',
     ];
 
-    private const string DB_FACADE = 'Illuminate\Support\Facades\DB';
+    private const string DB_FACADE = DB::class;
 
-    private const string CONNECTION = 'Illuminate\Database\ConnectionInterface';
+    private const string CONNECTION = ConnectionInterface::class;
 
     /**
      * @param  list<string>  $safeCalls  `Class::method` static calls whose result may be
@@ -160,7 +162,7 @@ final readonly class RawSqlNoInterpolationRule implements Rule
 
     private function isExcluded(string $file): bool
     {
-        return array_any($this->excludedPaths, fn ($excludedPath): bool => str_contains($file, $excludedPath));
+        return array_any($this->excludedPaths, fn (string $excludedPath): bool => str_contains($file, $excludedPath));
     }
 
     private function methodName(MethodCall|StaticCall $call): ?string

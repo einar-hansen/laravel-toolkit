@@ -85,6 +85,6 @@ final readonly class EmptyCatchMustBeExplainedRule implements Rule
 
     private function isExcluded(string $file): bool
     {
-        return array_any($this->excludedPaths, fn ($excludedPath): bool => str_contains($file, $excludedPath));
+        return array_any($this->excludedPaths, fn (string $excludedPath): bool => str_contains($file, $excludedPath));
     }
 }

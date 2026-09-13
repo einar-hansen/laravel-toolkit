@@ -104,7 +104,7 @@ final readonly class LiteralStringArgumentRule implements Rule
 
     private function isFirstParty(string $class): bool
     {
-        return array_any($this->namespacePrefixes, fn ($prefix): bool => str_starts_with($class, $prefix));
+        return array_any($this->namespacePrefixes, fn (string $prefix): bool => str_starts_with($class, $prefix));
     }
 
     private function resolveMethod(MethodCall|StaticCall $call, Scope $scope): ?ExtendedMethodReflection

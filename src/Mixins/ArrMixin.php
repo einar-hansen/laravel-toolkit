@@ -25,9 +25,7 @@ final class ArrMixin
     public function tryKeys(): Closure
     {
         return function (array $array, string|array|null $keys = null, string ...$additionalKeys): mixed {
-            if ($keys === null) {
-                $keys = (array) null;
-            }
+            $keys ??= (array) null;
 
             // If the first argument is an array, use it as the keys
             // Otherwise, combine the first key with any additional keys
@@ -93,9 +91,7 @@ final class ArrMixin
                 $stringValue = is_string($value) ? $value : (string) $value;
 
                 // If $emptyStringAsNull is null, use default value (false)
-                if ($emptyAsDefault === null) {
-                    $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
-                }
+                $emptyAsDefault ??= Config::get('toolkit.casting.empty_as_null', false);
 
                 if ($emptyAsDefault && ($stringValue === '' || $stringValue === '0')) {
                     return $default;
@@ -121,9 +117,7 @@ final class ArrMixin
                 $stringValue = is_string($value) ? $value : (string) $value;
 
                 // If $emptyStringAsNull is null, use default value (false)
-                if ($emptyAsNull === null) {
-                    $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
-                }
+                $emptyAsNull ??= Config::get('toolkit.casting.empty_as_null', false);
 
                 if ($emptyAsNull && ($stringValue === '' || $stringValue === '0')) {
                     return null;
@@ -149,9 +143,7 @@ final class ArrMixin
                 $stringValue = is_string($value) ? $value : (string) $value;
 
                 // If $emptyAsDefault is null, use default value (false)
-                if ($emptyAsDefault === null) {
-                    $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
-                }
+                $emptyAsDefault ??= Config::get('toolkit.casting.empty_as_null', false);
 
                 if ($emptyAsDefault && ($stringValue === '' || $stringValue === '0')) {
                     return new Stringable($default);
@@ -177,9 +169,7 @@ final class ArrMixin
                 $stringValue = is_string($value) ? $value : (string) $value;
 
                 // If $emptyAsNull is null, use default value (false)
-                if ($emptyAsNull === null) {
-                    $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
-                }
+                $emptyAsNull ??= Config::get('toolkit.casting.empty_as_null', false);
 
                 if ($emptyAsNull && ($stringValue === '' || $stringValue === '0')) {
                     return null;
@@ -202,9 +192,7 @@ final class ArrMixin
             }
 
             // If $emptyAsDefault is null, use default value (false)
-            if ($emptyAsDefault === null) {
-                $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
-            }
+            $emptyAsDefault ??= Config::get('toolkit.casting.empty_as_null', false);
 
             if (is_array($value)) {
                 if ($emptyAsDefault && $value === []) {
@@ -256,9 +244,7 @@ final class ArrMixin
             }
 
             // If $emptyAsNull is null, use default value (false)
-            if ($emptyAsNull === null) {
-                $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
-            }
+            $emptyAsNull ??= Config::get('toolkit.casting.empty_as_null', false);
 
             if (is_array($value)) {
                 if ($emptyAsNull && $value === []) {
@@ -478,9 +464,7 @@ final class ArrMixin
             $value = Arr::get($array, $key);
 
             // If $emptyAsDefault is null, use default value (false)
-            if ($emptyAsDefault === null) {
-                $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
-            }
+            $emptyAsDefault ??= Config::get('toolkit.casting.empty_as_null', false);
 
             if ($value === null || ($emptyAsDefault && empty($value))) {
                 if ($default !== null) {
@@ -520,9 +504,7 @@ final class ArrMixin
             $value = Arr::get($array, $key);
 
             // If $emptyAsNull is null, use default value (false)
-            if ($emptyAsNull === null) {
-                $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
-            }
+            $emptyAsNull ??= Config::get('toolkit.casting.empty_as_null', false);
 
             if ($value === null || ($emptyAsNull && empty($value))) {
                 return null;
@@ -546,9 +528,7 @@ final class ArrMixin
             $value = Arr::get($array, $key);
 
             // If $emptyAsDefault is null, use default value (false)
-            if ($emptyAsDefault === null) {
-                $emptyAsDefault = Config::get('toolkit.casting.empty_as_null', false);
-            }
+            $emptyAsDefault ??= Config::get('toolkit.casting.empty_as_null', false);
 
             if ($value === null || ($emptyAsDefault && empty($value))) {
                 if ($default !== null) {
@@ -589,9 +569,7 @@ final class ArrMixin
             $value = Arr::get($array, $key);
 
             // If $emptyAsNull is null, use default value (false)
-            if ($emptyAsNull === null) {
-                $emptyAsNull = Config::get('toolkit.casting.empty_as_null', false);
-            }
+            $emptyAsNull ??= Config::get('toolkit.casting.empty_as_null', false);
 
             if ($value === null || ($emptyAsNull && empty($value))) {
                 return null;

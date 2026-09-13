@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EinarHansen\Toolkit\PHPStan\Rules;
 
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
@@ -21,9 +23,9 @@ use PHPStan\Type\MixedType;
  */
 final class JsonResourceAnnotationRule implements Rule
 {
-    private const string JSON_RESOURCE = 'Illuminate\Http\Resources\Json\JsonResource';
+    private const string JSON_RESOURCE = JsonResource::class;
 
-    private const string RESOURCE_COLLECTION = 'Illuminate\Http\Resources\Json\ResourceCollection';
+    private const string RESOURCE_COLLECTION = ResourceCollection::class;
 
     public function getNodeType(): string
     {

@@ -90,7 +90,7 @@ final readonly class MigrationTimestampTzRule implements Rule
 
     private function isWithinRestrictedPath(string $file): bool
     {
-        return array_any($this->restrictedPaths, fn ($restrictedPath): bool => str_contains($file, $restrictedPath));
+        return array_any($this->restrictedPaths, fn (string $restrictedPath): bool => str_contains($file, $restrictedPath));
     }
 
     private function isBlueprintCall(MethodCall $methodCall, Scope $scope): bool
