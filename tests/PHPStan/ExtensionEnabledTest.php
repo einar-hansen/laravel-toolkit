@@ -15,11 +15,11 @@ class ExtensionEnabledTest extends PHPStanTestCase
         return [__DIR__.'/config/all-rules.neon'];
     }
 
-    public function test_all_thirteen_rules_can_be_enabled_together(): void
+    public function test_all_rules_can_be_enabled_together(): void
     {
         $rules = self::getContainer()->getServicesByTag('phpstan.rules.rule');
         $toolkitRules = array_filter($rules, fn ($rule): bool => str_starts_with($rule::class, 'EinarHansen\\Toolkit\\PHPStan\\'));
 
-        $this->assertCount(13, $toolkitRules);
+        $this->assertCount(14, $toolkitRules);
     }
 }

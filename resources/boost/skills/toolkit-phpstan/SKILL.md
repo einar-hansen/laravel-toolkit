@@ -1,6 +1,6 @@
 ---
 name: toolkit-phpstan
-description: Install, configure, migrate, and fix findings from Laravel Toolkit's 13 optional PHPStan rules for resources, SQL, translations, mail, models, migrations, and empty catches.
+description: Install, configure, migrate, and fix findings from Laravel Toolkit's 14 optional PHPStan rules for resources, SQL, translations, mail, models, migrations, empty catches, and testable delays.
 ---
 
 # Toolkit PHPStan rules
@@ -17,9 +17,10 @@ parameters:
         jsonResources: true
         rawSql: true
         explainedEmptyCatches: true
+        preferSleep: true
 ```
 
-All extension policy switches default false. For a new config, `php artisan toolkit:publish:phpstan --backup` publishes level 6 with API-message, mailable, resource, SQL and empty-catch policies enabled. It asks before replacing `phpstan.neon`; `--force` skips that prompt. Merge into an existing `.dist` file deliberately because `.neon` takes precedence.
+All extension policy switches default false. For a new config, `php artisan toolkit:publish:phpstan --backup` publishes level 6 with API-message, mailable, resource, SQL, empty-catch and Sleep policies enabled. It asks before replacing `phpstan.neon`; `--force` skips that prompt. Merge into an existing `.dist` file deliberately because `.neon` takes precedence.
 
 ## Fix the policy, preserve application intent
 
@@ -38,6 +39,7 @@ All extension policy switches default false. For a new config, `php artisan tool
 | `rawSql` / `LiteralStringReturnRule` | A `@return literal-string` must return source-derived strings. Do not add a misleading annotation to silence a SQL finding. Check a dynamic-string negative fixture. |
 | `rawSql` / `LiteralStringArgumentRule` | Pass source-derived strings to literal-string method parameters; configure every application namespace. Free functions/unpacked arguments are not covered. Keep all three SQL rules enabled together. |
 | `explainedEmptyCatches` / `EmptyCatchMustBeExplainedRule` | Handle the failure or document why discarding this exception is acceptable. Comments are detected but their reasoning needs review. Verify both failure and success paths. |
+| `preferSleep` / `PreferSleepRule` | Replace native `sleep()` and `usleep()` with `Illuminate\Support\Sleep::sleep()` / `Sleep::usleep()`. Use `Sleep::fake()` and `Sleep::assertSleptTimes()` in tests. Aliases and first-class references are checked; dynamic calls are not. Namespaced functions/methods are allowed. Review native return-value/interruption handling manually because Laravel returns a Sleep object. |
 
 ## Adapt paths and helper contracts
 

@@ -21,11 +21,12 @@ parameters:
         jsonResources: true
         rawSql: true
         explainedEmptyCatches: true
+        preferSleep: true
 ```
 
 All policies default to **false** in `extension.neon`. Including it does not choose a level, application paths, baselines, or error suppressions. It is not automatically installed by `phpstan/extension-installer`.
 
-For a new configuration, `php artisan toolkit:publish:phpstan` publishes a level 6 Laravel preset and enables `noHardcodedApiMessages`, `mailableLocale`, `jsonResources`, `rawSql`, and `explainedEmptyCatches`. The command confirms replacement; `--backup` saves the old `phpstan.neon` as `.backup`, and `--force` skips confirmation. If your project uses `.dist`, merge the new settings into it: `phpstan.neon` takes precedence. Re-publishing overwrites local edits.
+For a new configuration, `php artisan toolkit:publish:phpstan` publishes a level 6 Laravel preset and enables `noHardcodedApiMessages`, `mailableLocale`, `jsonResources`, `rawSql`, `explainedEmptyCatches`, and `preferSleep`. The command confirms replacement; `--backup` saves the old `phpstan.neon` as `.backup`, and `--force` skips confirmation. If your project uses `.dist`, merge the new settings into it: `phpstan.neon` takes precedence. Re-publishing overwrites local edits.
 
 ## Policies
 
@@ -42,6 +43,24 @@ All classes are in `EinarHansen\Toolkit\PHPStan\Rules`. They can also be registe
 | `noIntegerResourceIds` | `ResourceIdIsNotAutoIncrementRule` | Reject integer (including nullable integer) values under `id` / `*_id` keys in a resource's `toArray()`. This enforces a public-identifier policy; it cannot establish whether an integer actually auto-increments. Public identifiers do not replace authorization. |
 | `rawSql` | `RawSqlNoInterpolationRule`, `LiteralStringReturnRule`, `LiteralStringArgumentRule` | Put dynamic values in bindings. Allow literal fragments, safe numeric/boolean types, and explicitly trusted identifier helpers. Enforce literal-string return contracts and method arguments in `applicationNamespaces`. |
 | `explainedEmptyCatches` | `EmptyCatchMustBeExplainedRule` | Handle an exception or explain an empty catch with a comment. `excludedCatchPaths` defaults to empty, including console commands. Comments are detected, not evaluated for quality. |
+| `preferSleep` | `PreferSleepRule` | Replace native `sleep()` / `usleep()` with Laravel `Sleep::sleep()` / `Sleep::usleep()` so delays can be faked in tests. Applies to all analysed files. |
+
+## Testable delays
+
+Enable `parameters.toolkit.preferSleep: true` to reject PHP's built-in `sleep()` and `usleep()`. Use `Illuminate\Support\Sleep` (the Laravel helper class, not `Illuminate\Support\Facades\Sleep`):
+
+```php
+use Illuminate\Support\Sleep;
+
+Sleep::sleep(1);       // seconds
+Sleep::usleep(1000);   // microseconds
+```
+
+In tests, call `Sleep::fake()` before executing the code and `Sleep::assertSleptTimes(1)` afterward. Toolkit already fakes Sleep during unit tests when `toolkit.tests.enable_fake_sleep` is enabled.
+
+The rule resolves native functions through PHPStan, including namespace fallback, fully qualified names, imported aliases, case variations, and first-class callable references. Unrelated methods and namespaced functions called `sleep` are allowed. Dynamic calls such as `$functionName()` and `call_user_func()` are outside this check. The error identifier is `toolkit.sleep.nativeCall`.
+
+These replacements are intended for delays, not native return-value or interruption handling: Laravel returns a Sleep object rather than PHP's native result. Review such uses manually. When replacing a first-class callable, a closure can perform `Sleep::sleep($seconds)` without returning the Sleep object. Other timing functions (`time_nanosleep`, `time_sleep_until`) are not covered.
 
 ## Project-specific settings
 

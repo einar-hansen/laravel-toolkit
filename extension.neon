@@ -10,6 +10,7 @@ parameters:
         noIntegerResourceIds: false
         rawSql: false
         explainedEmptyCatches: false
+        preferSleep: false
         controllerPaths:
             - app/Http/Controllers
         migrationPaths:
@@ -35,6 +36,7 @@ parametersSchema:
         noIntegerResourceIds: bool()
         rawSql: bool()
         explainedEmptyCatches: bool()
+        preferSleep: bool()
         controllerPaths: listOf(string())
         migrationPaths: listOf(string())
         applicationNamespaces: listOf(string())
@@ -73,6 +75,8 @@ conditionalTags:
         phpstan.rules.rule: %toolkit.rawSql%
     EinarHansen\Toolkit\PHPStan\Rules\EmptyCatchMustBeExplainedRule:
         phpstan.rules.rule: %toolkit.explainedEmptyCatches%
+    EinarHansen\Toolkit\PHPStan\Rules\PreferSleepRule:
+        phpstan.rules.rule: %toolkit.preferSleep%
 
 services:
     -
@@ -116,3 +120,5 @@ services:
         class: EinarHansen\Toolkit\PHPStan\Rules\EmptyCatchMustBeExplainedRule
         arguments:
             excludedPaths: %toolkit.excludedCatchPaths%
+    -
+        class: EinarHansen\Toolkit\PHPStan\Rules\PreferSleepRule

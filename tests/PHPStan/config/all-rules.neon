@@ -12,3 +12,4 @@ parameters:
         noIntegerResourceIds: true
         rawSql: true
         explainedEmptyCatches: true
+        preferSleep: true

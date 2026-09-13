@@ -26,3 +26,4 @@ parameters:
         jsonResources: true
         rawSql: true
         explainedEmptyCatches: true
+        preferSleep: true
